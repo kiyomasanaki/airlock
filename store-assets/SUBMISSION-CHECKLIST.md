@@ -20,13 +20,13 @@ served by GitHub Pages; it just needs turning on:
 
 That URL is what goes in the Store form.
 
-> `docs/` is generated from the Markdown in `airlock-extension/legal/` by
+> `docs/` is generated from the Markdown in `legal/` by
 > `python3 docs/build.py`. Re-run it after editing any legal document, and commit
 > the result.
 
 ### 2. Complete the legal notice
 
-`airlock-extension/legal/MENTIONS-LEGALES.md` still has `[À COMPLÉTER]`
+`legal/MENTIONS-LEGALES.md` still has `[À COMPLÉTER]`
 placeholders: legal status, postal address, SIREN/SIRET, hosting provider,
 source-code licence.
 
@@ -71,12 +71,12 @@ Only tested on Chromium/Linux so far. Test at least on Windows.
 ```
 
 Produces `airlock-<version>.zip` containing only what the extension executes —
-`manifest.json` at the root, the four HTML/JS pairs, the CSS, and the four icon
-sizes Chrome actually uses. Docs, roadmap and Markdown legal sources are
+`manifest.json` at the root, `pages/`, `js/` (including the service worker and the
+shared `state.js`), `css/`, and the four icon sizes Chrome actually uses. Docs, roadmap and Markdown legal sources are
 deliberately excluded.
 
 The script verifies that `manifest.json` sits at the root and that every file it
-references is present. The archive is git-ignored (`*.zip`); rebuild it rather
+references — and every script/stylesheet the HTML pages load — is present. The archive is git-ignored (`*.zip`); rebuild it rather
 than committing it.
 
 ---
@@ -108,6 +108,16 @@ particular, so be precise:
 - **`https://claude.ai/*`** — Display a banner reminding the user of their current
   focus when a new conversation is opened. The extension does not read, log or
   transmit any page content.
+- **`scripting`** — Register the focus reminder card on other websites, only once the
+  user turns that option on and grants the optional site access below.
+- **Optional `https://*/*`, `http://*/*`** — Requested at runtime only when the user
+  enables "reminder on every site" on the Options page; removed when it is turned off.
+  Used solely to display the reminder card.
+- **Optional `nativeMessaging`** — Requested at runtime only on the first click on
+  "Generate with Claude". Inert without the separately installed host.
+
+> Because `nativeMessaging` is optional, the Store build can ship as is: the native
+> host is never required, and users who don't install it never see the prompt.
 
 > Expect the `claude.ai` host permission to draw a question during review. The
 > justification above is accurate: `content.js` only injects a banner element and

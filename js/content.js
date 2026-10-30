@@ -1,4 +1,8 @@
-// Airlock extension - content script for claude.ai
+// Airlock extension - content script
+//
+// Injected statically on claude.ai, and on every other site only if the user
+// opted in from the Options page (dynamic registration, see js/background.js).
+// Relies on js/state.js, injected just before it.
 //
 // Carte flottante rappelant le focus courant :
 //  - ancree en bas a droite par defaut, deplacable, position persistee
@@ -7,7 +11,7 @@
 // Le rappel doit se remarquer sans harceler : une seule pulsation, jamais
 // pendant un deplacement, jamais sur un onglet en arriere-plan.
 
-const KEY = 'airlock_state';
+const KEY = AIRLOCK_KEY;
 const UI_KEY = 'airlock_ui';        // position de la carte, hors donnees exportees
 
 const PULSE_DELAY = 30000;          // premier rappel : 30 s apres le chargement
@@ -15,24 +19,35 @@ const PULSE_EVERY = 60000;          // puis toutes les minutes
 const PULSE_MS = 1100;              // duree de l'animation, cf. content.css
 const MARGIN = 12;                  // marge minimale au bord de la fenetre
 
+const ON_CLAUDE = location.hostname === 'claude.ai';
+
 let bannerEl = null;
 let pos = null;                     // { left, top } une fois deplacee
 let dragging = false;
+let lastSig = null;                 // evite de reconstruire la carte pour rien
+let dismissed = false;              // masquee par l'utilisateur sur cette page
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 // ─── etat ───────────────────────────────────────────────────────────────
 
+// Apres un rechargement de l'extension, le script deja injecte survit dans la
+// page mais n'a plus acces a chrome.* : on se tait au lieu de lever des erreurs.
+function alive() {
+  try { return !!chrome.runtime && !!chrome.runtime.id; } catch (e) { return false; }
+}
+
 function getState(cb) {
+  if (!alive()) return;
   chrome.storage.local.get([KEY, UI_KEY], r => {
     const ui = r[UI_KEY];
     if (ui && typeof ui.left === 'number' && typeof ui.top === 'number') pos = ui;
-    cb(r[KEY] || { focus: null, queue: [] });
+    cb(airlockNormalize(r[KEY]));
   });
 }
 
 function savePos() {
-  if (pos) chrome.storage.local.set({ [UI_KEY]: pos });
+  if (pos && alive()) chrome.storage.local.set({ [UI_KEY]: pos });
 }
 
 // ─── position ───────────────────────────────────────────────────────────
@@ -121,13 +136,24 @@ function el(tag, cls, text) {
 }
 
 function createBanner(state) {
-  const wasDismissed = bannerEl && bannerEl.dataset.dismissed === '1';
+  if (dismissed) {                          // ferme par l'utilisateur : on n'insiste pas
+    if (bannerEl) bannerEl.remove();
+    bannerEl = null;
+    return;
+  }
+
+  const isNewChat = ON_CLAUDE && (location.pathname === '/new' || location.pathname === '/');
+  const hasFocus = !!state.focus;
+  const next = hasFocus ? airlockNextStep(state, state.focus) : null;
+
+  // Une ecriture sans effet visible (position, historique...) ne doit pas
+  // rejouer l'animation d'entree.
+  const sig = JSON.stringify([hasFocus && state.focus, next, state.queue.length, isNewChat]);
+  if (sig === lastSig && bannerEl && bannerEl.isConnected) return;
+  lastSig = sig;
+
   if (bannerEl) bannerEl.remove();
   bannerEl = null;
-  if (wasDismissed) return;                 // ferme par l'utilisateur : on n'insiste pas
-
-  const isNewChat = location.pathname === '/new' || location.pathname === '/';
-  const hasFocus = !!state.focus;
   if (!hasFocus && !isNewChat) return;      // ni focus ni page d'accueil : silence
 
   const card = el('div', 'airlock-banner');
@@ -145,8 +171,9 @@ function createBanner(state) {
   close.title = 'Masquer — Ctrl+Shift+Q pour rouvrir Airlock';
   close.setAttribute('aria-label', 'Masquer le rappel Airlock');
   close.addEventListener('click', () => {
-    card.dataset.dismissed = '1';
+    dismissed = true;
     card.remove();
+    bannerEl = null;
   });
   head.appendChild(close);
   card.appendChild(head);
@@ -159,6 +186,13 @@ function createBanner(state) {
     f.appendChild(el('span', 'airlock-dot'));
     f.appendChild(el('span', 'airlock-focus-text', state.focus));
     body.appendChild(f);
+
+    if (next) {
+      const ns = el('p', 'airlock-next');
+      ns.appendChild(el('span', 'airlock-next-label', 'prochaine étape'));
+      ns.appendChild(el('span', 'airlock-next-text', next));
+      body.appendChild(ns);
+    }
 
     const meta = el('div', 'airlock-meta');
     const n = (state.queue || []).length;
@@ -214,26 +248,27 @@ setTimeout(() => {
 
 // ─── synchronisation ────────────────────────────────────────────────────
 
-chrome.runtime.onMessage.addListener(msg => {
-  if (msg.type === 'airlock_update') createBanner(msg.state);
-});
-
-chrome.storage.onChanged.addListener(changes => {
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local') return;
   if (changes[UI_KEY] && changes[UI_KEY].newValue) {
     pos = changes[UI_KEY].newValue;
     if (bannerEl) applyPos(bannerEl);
   }
-  if (changes[KEY]) createBanner(changes[KEY].newValue || { focus: null, queue: [] });
+  if (changes[KEY]) createBanner(airlockNormalize(changes[KEY].newValue));
 });
 
-// navigation interne de l'application, sans rechargement
+// Navigation interne des applications monopage, sans rechargement. Un simple
+// releve d'URL par seconde : un MutationObserver sur tout le document se
+// declencherait a chaque token d'une reponse en streaming, ou a chaque
+// rafraichissement d'une page lourde.
 let lastUrl = location.href;
-new MutationObserver(() => {
+setInterval(() => {
   if (location.href === lastUrl) return;
   lastUrl = location.href;
-  if (bannerEl) delete bannerEl.dataset.dismissed;   // nouvelle page, nouveau rappel
-  setTimeout(refresh, 300);
-}).observe(document.body, { childList: true, subtree: true });
+  dismissed = false;                        // nouvelle page, nouveau rappel
+  lastSig = null;
+  refresh();
+}, 1000);
 
 // la fenetre retrecit : la carte doit rester visible
 window.addEventListener('resize', () => { if (bannerEl) applyPos(bannerEl); });

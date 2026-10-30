@@ -27,3 +27,9 @@ native-host/
 # Local logs / scratch
 *.log
 .env
+
+# AI assistant / local dev tooling — not part of the published extension
+CLAUDE.md
+package.sh
+.claude/
+.serena/

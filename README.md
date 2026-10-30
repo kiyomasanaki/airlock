@@ -37,8 +37,13 @@ around the way that happens with **ADHD** in particular:
   app and picking a project.
 - **Task initiation and "what was I doing?"** One single focus is always visible, so
   coming back doesn't require reconstructing your own state from scratch.
-- **Out of sight, out of mind.** The banner on `claude.ai` re-shows your current focus
-  at the exact moment a new conversation is about to pull you elsewhere.
+- **Out of sight, out of mind.** The reminder card re-shows your current focus and its
+  next step on `claude.ai` — and, if you opt in, on every site, where attention
+  actually escapes. Hovering the toolbar icon shows it too, from any tab.
+- **"Where do I even start?"** A focus can be broken into small, concrete steps, the
+  first one doable in under ten minutes. The next step then travels with the focus.
+- **Misclicks and interrupted decisions.** Every removal can be undone for a few
+  seconds, and an impulse captured but not yet ranked survives the popup closing.
 - **The guilt of the abandoned list.** `drop` is a first-class answer with no penalty.
   There is no streak, no score, and no backlog quietly accusing you.
 
@@ -60,6 +65,9 @@ on a bad day.
 | **No notifications, no streaks, no score, no time tracking** | Nothing that turns the tool into another source of pressure |
 | **Heavy things live on the Options page** | The popup stays small enough to use without thinking |
 | **Auto-promotion of the next item on ✓** | Finishing something shouldn't require deciding what's next |
+| **Keys `1` `2` `3` answer the decision** | The whole capture → decide loop works without reaching for the mouse |
+| **Undo instead of confirmation dialogs** | A misclick never costs an idea, and no modal stands in the way |
+| **Nothing captured is ever lost** | An unanswered capture is saved and flagged with `?` on the icon |
 
 ## What it is not
 
@@ -98,8 +106,16 @@ finished today. That's the whole model.
 | **queue** | The impulse waits its turn, your current focus is preserved |
 | **drop** | Discarded, and that's perfectly fine |
 
+Keys `1`, `2`, `3` answer without the mouse. If the popup closes before you answer, the
+impulse is kept: the icon shows a `?` and the question is waiting when you reopen it.
+
 **Focus finished** → click ✓. It moves to "done today" and the first queued item
-automatically takes its place.
+automatically takes its place. Dropping, deleting or finishing shows an **undo** link
+for a few seconds (`Ctrl+Z` works too).
+
+**Stuck on where to start** → "découper en étapes" in the popup footer opens the step
+view: write the very first concrete action, then the next. The first unticked step is
+shown under the focus in the popup, in the icon tooltip and in the reminder card.
 
 In the queue, each item has three buttons: `→` promotes it to focus, `↑` moves it up,
 `×` deletes it.
@@ -114,35 +130,44 @@ Two limitations that come from Chrome, not from the extension:
 - The shortcut only works while Chrome is the active application.
 - For a shortcut that works even without focus on Chrome, you need `Ctrl+Shift+[0-9]`.
 
-## Reminder on claude.ai
+## Reminder card
 
-A discreet banner appears at the top of the page:
+A discreet, draggable card, anchored bottom right, showing the current focus and its
+next step:
 
 - On **claude.ai/new** or the home page — it reminds you of your current focus before
   you dive into a new conversation. If you have no focus, it suggests setting one first.
-- On an **existing conversation** — it only shows if you have a current focus, to avoid
-  visual clutter.
+- On an **existing claude.ai conversation** — it only shows if you have a current focus,
+  to avoid visual clutter.
+- On **every other site — opt-in**, from the Options page ("Rappel du focus sur tous les
+  sites"). Chrome then asks for site access; it is used only to display the card, and
+  turning the option off removes the permission. The card only appears if a focus is set.
 
-Dismissible with one click on the cross. No conversation content is ever read.
+Dismissible with one click on the cross (until the next page). No page content is ever
+read.
 
 ## Options page
 
 Right-click the extension icon → **Options**. The popup stays deliberately minimal;
 everything heavier lives here:
 
-- **JSON export** of your data (focus, queue, history) — your backup
-- **JSON import** to restore an export
-- **Full history** of completed items (the popup only shows the last 5)
-- **Direct link** to `chrome://extensions/shortcuts` to change the shortcut
+- **Reminder on every site** — opt-in switch (see above)
+- **JSON export** of your data (focus, queue, dated history, steps) — your backup
+- **JSON import** to restore an export (exports from 1.0 are still accepted)
+- **Full history** of completed items, grouped by day (the popup only shows today's)
+- **Current shortcut** and a direct link to `chrome://extensions/shortcuts` to change it
 
 ## Your data & principles
 
 - **Local-first** — everything is stored in `chrome.storage.local`. No server, no
-  account, no sync, no telemetry, no analytics. The extension asks for the `storage`
-  permission plus host access to `claude.ai` for the reminder banner, and nothing else.
+  account, no sync, no telemetry, no analytics. At install the extension asks for
+  `storage`, `scripting` and host access to `claude.ai` for the reminder card. Access to
+  other sites and `nativeMessaging` are optional permissions, only requested when you
+  turn on the matching feature.
 - **One deliberate exception** — the optional assisted-methodology feature (Phase 3.5)
   runs `claude -p` locally through a native messaging host you install yourself. It is
-  off by default; without the host, no network call is ever made. When enabled, only
+  off by default; without the host, no network call is ever made, and writing the steps
+  by hand works without it. When enabled, only
   the single impulse you act on is sent — never the queue, never the history. See the
   privacy policy for details.
 - **Lightweight popup** — anything heavy goes on a separate Options page.
@@ -165,10 +190,12 @@ Plain HTML/CSS/JS, zero dependencies, zero build step. Edit, go to
 | File | Role |
 |---|---|
 | `manifest.json` | Configuration (Manifest v3) — must stay at the repo root |
-| `pages/popup.html` + `js/popup.js` | The airlock — main UI |
+| `js/state.js` | Shared state helpers (storage key, normalisation, next step), loaded by every surface |
+| `js/background.js` | Service worker — icon tooltip/badge, registration of the opt-in "every site" reminder |
+| `pages/popup.html` + `js/popup.js` + `js/theme.js` | The airlock — main UI |
 | `pages/options.html` + `js/options.js` | Options page — export/import, history |
 | `pages/methodology.html` + `js/methodology.js` + `css/methodology.css` | Assisted-methodology view (Phase 3.5) |
-| `js/content.js` + `css/content.css` | Banner injected on claude.ai |
+| `js/content.js` + `css/content.css` | Reminder card injected on claude.ai (and every site if opted in) |
 
 ## Repository layout
 

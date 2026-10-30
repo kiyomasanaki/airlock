@@ -1,6 +1,6 @@
 # Chrome Web Store assets
 
-Everything used for the Store listing, kept outside `airlock-extension/` so it does not
+Everything used for the Store listing, kept outside the extension's runtime folders (`pages/`, `js/`, `css/`, `icons/`) so it does not
 bloat the packaged archive (the `.gitignore` already excludes `*.zip`).
 
 ## Contents
@@ -20,7 +20,7 @@ bloat the packaged archive (the `.gitignore` already excludes `*.zip`).
 They follow the narrative the roadmap called for: problem → capture → prioritisation.
 
 The popup visuals are **real captures of the extension**, taken by loading
-`airlock-extension/` into Chromium and driving the popup — not mockups. The popup is
+the repo root into Chromium and driving the popup — not mockups. The popup is
 captured at 2× then composed at 1× so it stays sharp at final size.
 
 > **Known mismatch:** the marketing copy on these screenshots is in English while the
@@ -33,7 +33,7 @@ The generation script is not versioned — it depends on Playwright and a local 
 outside the scope of a build-step-free extension. To redo the screenshots after a UI
 change:
 
-1. load `airlock-extension/` into Chromium with `--load-extension`
+1. load the repo root into Chromium with `--load-extension`
 2. inject the desired state via `chrome.storage.local.set({ airlock_state: … })`
 3. screenshot `chrome-extension://<id>/popup.html`
 4. compose onto a 1280×800 canvas
@@ -43,9 +43,9 @@ change:
 - **UI localisation** — the interface is French-only while the listing and all
   documentation are in English. This is the biggest remaining gap.
 - **Store icon** — the Store wants a dedicated 128×128 icon.
-  `airlock-extension/icons/icon128.png` can serve, but the roadmap calls for final
+  `icons/icon128.png` can serve, but the roadmap calls for final
   icons validated at 16px.
 - **Promotional image** 440×280 — optional, only needed to be featured.
 - **Public privacy policy URL** — mandatory. See
-  `airlock-extension/legal/README.md`.
+  `legal/README.md`.
 - **Completed legal notice** — legal status, address, SIRET, host, licence.

@@ -1,15 +1,26 @@
 {
   "manifest_version": 3,
   "name": "Airlock - Capture & prioritise",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "An airlock between impulse and action. Capture the idea instead of diving into it. Global shortcut Ctrl+Shift+Q.",
+  "minimum_chrome_version": "102",
   "permissions": [
     "storage",
+    "scripting"
+  ],
+  "optional_permissions": [
     "nativeMessaging"
   ],
   "host_permissions": [
     "https://claude.ai/*"
   ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "service_worker": "js/background.js"
+  },
   "action": {
     "default_popup": "pages/popup.html",
     "default_title": "Airlock - Quick capture"
@@ -32,6 +43,7 @@
         "https://claude.ai/*"
       ],
       "js": [
+        "js/state.js",
         "js/content.js"
       ],
       "css": [

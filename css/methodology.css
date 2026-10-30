@@ -279,3 +279,33 @@ body {
   .pane { height: auto; overflow: visible; }
   .pane-left { border-right: none; border-bottom: 1px solid var(--rule); }
 }
+
+/* ─── etapes manuelles ───────────────────────────────────────────────── */
+
+.step { grid-template-columns: auto 1fr auto; }
+.step-actions { display: flex; gap: 8px; align-items: center; }
+
+.step-del {
+  width: 28px; height: 28px; flex-shrink: 0;
+  border: none; border-radius: 50%;
+  color: var(--fg-faint); font-size: 15px; line-height: 1;
+  background: transparent;
+  cursor: pointer;
+  transition: color .14s ease, background-color .14s ease;
+}
+.step-del:hover { color: var(--danger); background: var(--surface-in); }
+.step-del:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.add-step { display: flex; gap: 10px; margin-top: 18px; }
+.add-step input {
+  flex: 1; min-height: 42px; padding: 0 16px;
+  border: none; border-radius: var(--r-md);
+  font: inherit; font-size: 14px; color: var(--fg);
+  background: var(--surface-in);
+  box-shadow: inset -3px -3px 8px var(--sh-light), inset 3px 3px 9px var(--sh-dark);
+  outline: none;
+}
+.add-step input::placeholder { color: var(--fg-faint); }
+.add-step input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.state + .add-step, .state + .state { margin-top: 18px; }
