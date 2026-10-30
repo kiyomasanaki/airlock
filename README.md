@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.webp" alt="Airlock" width="160">
+</p>
+
 # Airlock
 
 **Airlock is a Chrome extension (Manifest v3) that puts a buffer zone between an
