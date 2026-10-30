@@ -1,6 +1,6 @@
 # Politique de confidentialité - Extension Airlock
 
-**Dernière mise à jour : 19 mai 2026**
+**Dernière mise à jour : 28 octobre 2026**
 
 ## Résumé
 
@@ -48,15 +48,20 @@ Si vous souhaitez que l'extension reste strictement locale, il suffit de ne pas 
 - Aucune vente de données (nous n'avons aucune donnée à vendre)
 - Aucun réseau publicitaire
 - Aucun accès à votre historique de navigation
-- Aucune lecture ou modification du contenu des sites que vous visitez, à l'exception de l'affichage d'une bannière passive sur les pages claude.ai
+- Aucune lecture, aucun enregistrement ni aucune transmission du contenu des sites que vous visitez. L'extension ajoute seulement sa propre carte de rappel : sur claude.ai, et sur les autres sites uniquement si vous activez cette option
 
 ## Permissions demandées
 
-L'extension demande les permissions Chrome suivantes :
+L'extension demande les permissions Chrome suivantes à l'installation :
 
 - **`storage`** : pour enregistrer localement vos impulsions et focus sur votre appareil
-- **`nativeMessaging`** : pour joindre l'hôte local optionnel qui exécute le CLI Claude Code lors de la génération de méthodologie. Sans cet hôte installé, cette permission ne fait rien
+- **`scripting`** : pour afficher la carte de rappel du focus sur d'autres sites, uniquement après activation de cette option et autorisation d'accès aux sites (voir ci-dessous). Seule, elle ne donne accès à aucun site
 - **`host_permissions: https://claude.ai/*`** : pour afficher une bannière contextuelle sur les pages claude.ai indiquant votre focus actuel. L'extension ne lit pas, n'enregistre pas et ne transmet aucun contenu de claude.ai
+
+Et ces permissions **optionnelles**, que Chrome ne vous demande qu'au moment où vous utilisez la fonctionnalité correspondante, et que vous pouvez retirer à tout moment :
+
+- **Accès à tous les sites (`https://*/*`, `http://*/*`)** : demandé uniquement si vous activez « Rappel du focus sur tous les sites » dans la page Options. Sert exclusivement à afficher la carte de rappel ; aucun contenu de page n'est lu, enregistré ou transmis. Désactiver l'option retire la permission
+- **`nativeMessaging`** : demandé uniquement au premier clic sur « Générer avec Claude ». Sert à joindre l'hôte local optionnel qui exécute le CLI Claude Code. Sans cet hôte installé, il ne fait rien
 
 ## Vos droits
 

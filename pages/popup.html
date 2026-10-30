@@ -3,14 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Airlock</title>
-<script>
-// Applied synchronously, before paint, so there is no light/dark flash on open.
-try {
-  var t = localStorage.getItem('airlock_theme');
-  if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  document.documentElement.dataset.theme = t;
-} catch (e) {}
-</script>
+<script src="../js/theme.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -211,6 +204,45 @@ body {
   font-size: 12px; color: var(--text-faint);
 }
 .done-item .check { color: var(--success); font-weight: bold; }
+
+.next-step {
+  margin-top: 4px;
+  font-size: 12px; color: var(--text-dim); line-height: 1.35;
+  word-break: break-word;
+}
+.next-step b { color: var(--accent); font-weight: 600; }
+
+.btn-d .key {
+  margin-left: auto;
+  min-width: 20px; padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.14);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px; text-align: center;
+}
+.btn-d:focus-visible, .btn-x:focus-visible, .btn-capture:focus-visible, .theme-toggle:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+
+.toast {
+  display: none;
+  align-items: center; gap: 10px;
+  margin-top: 12px; padding: 9px 12px;
+  border-radius: 12px;
+  background: var(--text); color: var(--bg);
+  font-size: 12px;
+}
+.toast.visible { display: flex; }
+.toast span { flex: 1; word-break: break-word; }
+.toast button {
+  background: none; border: none; cursor: pointer;
+  color: var(--accent); font: inherit; font-weight: 700;
+  text-decoration: underline; padding: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-d:active { transform: none; }
+}
 </style>
 </head>
 <body>
@@ -227,30 +259,34 @@ body {
   <div style="flex:1; min-width:0">
     <div class="focus-label">focus actuel</div>
     <div class="focus-text empty" id="focusText">aucun — tape ci-dessous</div>
+    <div class="next-step" id="nextStep" hidden></div>
   </div>
-  <button class="btn-x" id="btnDone" title="terminé">✓</button>
+  <button class="btn-x" id="btnDone" title="terminé — le suivant de la file prend la place" aria-label="marquer le focus comme terminé">✓</button>
 </div>
 
 <div class="capture-row">
-  <input type="text" id="input" placeholder="capture l'impulsion..." autofocus />
-  <button class="btn-capture" id="btnAdd">+</button>
+  <input type="text" id="input" placeholder="capture l'impulsion..." autofocus maxlength="500" aria-label="capturer une impulsion" />
+  <button class="btn-capture" id="btnAdd" title="capturer" aria-label="capturer">+</button>
 </div>
-<div class="hint">Entrée pour valider · Ctrl+Shift+Q pour rouvrir</div>
+<div class="hint" id="hint">Entrée pour valider · Ctrl+Shift+Q pour rouvrir</div>
 
-<div class="decision" id="decision">
+<div class="decision" id="decision" role="group" aria-labelledby="decisionQ">
   <div class="decision-q" id="decisionQ"></div>
   <div class="decision-btns">
     <button class="btn-d switch" id="btnGo">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>
       je switch
+      <span class="key" aria-hidden="true">1</span>
     </button>
     <button class="btn-d queue" id="btnQueue">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
       file d'attente
+      <span class="key" aria-hidden="true">2</span>
     </button>
     <button class="btn-d drop" id="btnDrop">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>
       laisser tomber
+      <span class="key" aria-hidden="true">3</span>
     </button>
   </div>
 </div>
@@ -263,15 +299,21 @@ body {
   <div id="done"></div>
 </div>
 
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span id="toastText"></span>
+  <button id="btnUndo">annuler</button>
+</div>
+
 <div class="footer">
   <span id="count">0 en file</span>
   <span>
-    <button id="btnMethod">méthodologie</button>
+    <button id="btnMethod" title="découper le focus en petites étapes concrètes">découper en étapes</button>
     <span style="color:var(--border)"> · </span>
     <button id="btnReset">tout vider</button>
   </span>
 </div>
 
+<script src="../js/state.js"></script>
 <script src="../js/popup.js"></script>
 </body>
 </html>

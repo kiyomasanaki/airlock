@@ -52,7 +52,15 @@ Three possible answers:
 → queue — it waits its turn, your current focus is preserved
 → drop — discarded, and that's perfectly fine
 
-When you finish a focus, one click on ✓ archives it and the first queued item automatically takes its place.
+Keys 1, 2 and 3 answer without touching the mouse. If you close the popup before answering, the impulse is kept and a "?" on the icon waits for you.
+
+When you finish a focus, one click on ✓ archives it and the first queued item automatically takes its place. Misclicked? Every removal can be undone for a few seconds.
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+STUCK ON "WHERE DO I START?"
+
+Break your focus into small, concrete steps — the first one doable in under ten minutes. The next step then shows up under your focus, in the popup, on the icon tooltip and in the reminder card. No AI required; an optional local Claude Code bridge can draft the steps for you.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -72,17 +80,17 @@ YOUR DATA STAYS PUT
 • No server, no account, no sync
 • No data ever leaves your machine
 • No telemetry, no analytics, no tracking — not even "anonymised"
-• One permission requested: "storage"
+• Minimal permissions at install; access to other sites is only asked for if you turn on the reminder everywhere
 
 An Options page lets you export your data as JSON at any time, and import it back. Backup stays under your control.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
-PASSIVE REMINDER ON CLAUDE.AI
+PASSIVE REMINDER — ON CLAUDE.AI, OR EVERYWHERE
 
-If you use claude.ai, a discreet banner reminds you of your current focus when you open a new conversation — exactly the moment context-switching happens. And if you have no focus set, it suggests setting one before you dive in.
+Out of sight, out of mind. A discreet, draggable card reminds you of your current focus and its next step. On claude.ai it shows by default, when you open a new conversation — exactly the moment context-switching happens. Turn on "reminder on every site" in the Options page and it follows you to email, social media, video sites: wherever attention actually escapes.
 
-Dismissible in one click. No conversation content is ever read.
+Dismissible in one click. No page content is ever read.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -120,5 +128,8 @@ Open source, MIT licence.
 | **Single purpose** | Capture and prioritise user-entered focus items locally, in order to reduce context switching. |
 | **`storage` permission justification** | Persist the current focus, the priority queue and the history of completed items locally. No data is transmitted. |
 | **`claude.ai` host access justification** | Display a banner reminding the user of their current focus when a new conversation is opened. No page content is read or transmitted. |
+| **`scripting` permission justification** | Register the focus reminder card on other websites, only after the user enables that option on the Options page and grants the optional site access. No page content is read or transmitted. |
+| **Optional host access (`https://*/*`, `http://*/*`) justification** | Requested at runtime only when the user turns on "reminder on every site"; used solely to display the focus reminder card. Removed when the option is turned off. |
+| **Optional `nativeMessaging` justification** | Requested at runtime only when the user clicks "Generate with Claude", to reach a local host the user installed themselves. Inert otherwise. |
 | **Data usage** | Tick "This extension does not collect or use user data". |
-| **Privacy policy URL** | *(to be filled — see `airlock-extension/legal/README.md`)* |
+| **Privacy policy URL** | *(to be filled — see `legal/README.md`)* |

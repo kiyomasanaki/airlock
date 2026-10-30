@@ -1,6 +1,6 @@
 # Privacy Policy - Airlock Extension
 
-**Last updated: May 19, 2026**
+**Last updated: October 28, 2026**
 
 ## Summary
 
@@ -48,15 +48,20 @@ If you want the extension to stay strictly local, simply do not install the nati
 - We do not sell data (we have no data to sell)
 - We do not use advertising networks
 - We do not access your browsing history
-- We do not read or modify content on websites you visit, except for displaying a passive banner on claude.ai pages
+- We do not read, log or transmit content from websites you visit. The extension only adds its own reminder card: on claude.ai pages, and on other websites only if you turn that option on
 
 ## Permissions explained
 
-The extension requests the following Chrome permissions:
+The extension requests the following Chrome permissions at installation:
 
 - **`storage`**: To save your impulses and focus items locally on your device
-- **`nativeMessaging`**: To reach the optional local host that runs the Claude Code CLI for methodology generation. Without that host installed, this permission does nothing
+- **`scripting`**: To show the focus reminder card on other websites, only once you have turned that option on and granted site access (see below). On its own it gives access to no website
 - **`host_permissions: https://claude.ai/*`**: To display a contextual banner on claude.ai pages showing your current focus. The extension does not read, log, or transmit any content from claude.ai
+
+And these **optional** permissions, which Chrome only asks you for when you use the matching feature, and which you can revoke at any time:
+
+- **Access to all websites (`https://*/*`, `http://*/*`)**: Requested only if you enable "Focus reminder on every site" on the Options page. Used solely to display the reminder card; no page content is read, logged or transmitted. Turning the option off removes the permission
+- **`nativeMessaging`**: Requested only the first time you click "Generate with Claude". Used to reach the optional local host that runs the Claude Code CLI. Without that host installed, it does nothing
 
 ## Your rights
 

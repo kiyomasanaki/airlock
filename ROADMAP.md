@@ -118,10 +118,10 @@ native messaging is the only browser-supported bridge.
 - Only the single impulse being acted on is sent. Never the queue, never the history.
 - No account, no API key, no server on Airlock's side.
 
-**Known tension with Phase 3:** an extension that requires a separately installed
-native host cannot be distributed through the Chrome Web Store alone. Either the
-Store build ships without this feature, or the feature stays a developer-mode extra.
-That decision is still open.
+**Known tension with Phase 3 — resolved in Phase 3.7:** `nativeMessaging` is now an
+optional permission, requested only on the first "Générer avec Claude" click, and steps
+can be written by hand without any host. The Store build ships the view as is; the
+Claude bridge stays an opt-in extra for users who install the host.
 
 **Also required by this phase:** both privacy policies were rewritten. "No data ever
 leaves your device" was no longer true unconditionally, and they are published legal
@@ -154,6 +154,43 @@ focus set, nothing is shown.
 
 ---
 
+## Phase 3.7 — Audit and reliability pass
+
+**Status: built, unpublished**
+
+An end-to-end audit (extension loaded in Chromium and driven by script) found bugs that
+hit the core loop, plus gaps between what the README promised for ADHD users and what
+the code delivered.
+
+**Bugs fixed:**
+- A capture typed while a focus was running was **lost** if the popup closed before the
+  switch/queue/drop answer — the most common way the popup closes. `pending` is now
+  saved immediately and the question is restored on reopen.
+- The popup theme never applied on open: the inline `<script>` was blocked by Manifest
+  V3's content security policy. Moved to `js/theme.js`.
+- "Done today" showed the last five items ever, and the "full history" on the Options
+  page was silently capped at 20. Completions now carry a date; history keeps 1000.
+- Export/import dropped every step breakdown; the Options page crashed on a cleared
+  storage; the methodology tab could overwrite a capture made in the popup while a
+  generation was running (now read-modify-write on fresh storage).
+- `package.sh` pointed at an `airlock-extension/` folder that no longer exists.
+- The claude.ai banner rebuilt (and replayed its entry animation) on every storage
+  write, and watched every DOM mutation of the page to detect navigation.
+
+**ADHD-driven improvements**, each answering a difficulty the README already names:
+- *Out of sight, out of mind* — the reminder card can be turned on for every site
+  (opt-in, optional host permission), and the toolbar tooltip shows the focus from
+  any tab.
+- *Task initiation* — steps can be written by hand; the next step shows under the focus
+  in the popup, the tooltip and the card.
+- *Friction* — keys `1` `2` `3` answer the decision.
+- *Misclicks without guilt* — undo toast instead of confirmation dialogs.
+- *An unanswered capture is never forgotten* — `?` badge on the icon.
+
+No telemetry, no streak, no score, no time tracking were added; `drop` stays free.
+
+---
+
 ## Phase 4 — First improvement wave (data-driven)
 
 **Entry condition:** Phase 3 complete and user feedback collected.
@@ -172,7 +209,7 @@ problem actually experienced during Phase 1.
 - **Editing an existing item** (currently you must delete and recapture)
 - **Drag-and-drop reordering** of the queue
 - **Search** across captured items
-- **Themes** (light/dark auto, based on `prefers-color-scheme`)
+- ~~**Themes** (light/dark auto, based on `prefers-color-scheme`)~~ — done in the popup
 - **Optional notifications**: a reminder when a focus has been idle for a long time
 
 **Exit condition:** one or two features added, validated by usage, without inflating

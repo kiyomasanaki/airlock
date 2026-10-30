@@ -51,7 +51,15 @@ Trois réponses possibles :
 → file d'attente — ça attend son tour, ton focus actuel est préservé
 → laisser tomber — jeté, et c'est très bien
 
-Quand tu termines ton focus, un clic sur ✓ l'archive et le premier item de la file prend automatiquement sa place.
+Les touches 1, 2 et 3 répondent sans toucher la souris. Si tu fermes le popup avant de répondre, l'impulsion est gardée et un « ? » sur l'icône t'attend.
+
+Quand tu termines ton focus, un clic sur ✓ l'archive et le premier item de la file prend automatiquement sa place. Un clic de travers ? Toute suppression s'annule pendant quelques secondes.
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+BLOQUÉ SUR « PAR OÙ JE COMMENCE ? »
+
+Découpe ton focus en petites étapes concrètes — la première faisable en moins de dix minutes. La prochaine étape s'affiche alors sous ton focus, dans le popup, dans l'infobulle de l'icône et dans la carte de rappel. Aucune IA nécessaire ; un pont local optionnel vers Claude Code peut proposer les étapes à ta place.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -71,17 +79,17 @@ TES DONNÉES NE BOUGENT PAS
 • Aucun serveur, aucun compte, aucune synchronisation
 • Aucune donnée ne quitte ta machine, jamais
 • Aucune télémétrie, aucun analytics, aucun tracking — même « anonymisé »
-• Une seule permission demandée : « storage »
+• Permissions minimales à l'installation ; l'accès aux autres sites n'est demandé que si tu actives le rappel partout
 
 Une page Options permet d'exporter tes données en JSON à tout moment, et de les réimporter. La sauvegarde reste sous ton contrôle.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
-RAPPEL PASSIF SUR CLAUDE.AI
+RAPPEL PASSIF — SUR CLAUDE.AI, OU PARTOUT
 
-Si tu utilises claude.ai, un bandeau discret te rappelle ton focus en cours quand tu ouvres une nouvelle conversation — le moment précis où le context-switching se produit. Et si tu n'as pas de focus défini, il te suggère d'en poser un avant de plonger.
+Loin des yeux, loin du cerveau. Une carte discrète et déplaçable te rappelle ton focus et sa prochaine étape. Sur claude.ai elle s'affiche par défaut, quand tu ouvres une nouvelle conversation — le moment précis où le context-switching se produit. Active « rappel sur tous les sites » dans la page Options et elle te suit sur les mails, les réseaux, les sites de vidéos : là où l'attention s'échappe vraiment.
 
-Fermable d'un clic. Aucune donnée de conversation n'est lue.
+Fermable d'un clic. Aucun contenu de page n'est lu.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -117,5 +125,8 @@ Code source ouvert, licence MIT.
 | **Objectif unique** (single purpose) | Capturer et prioriser localement des intentions de travail saisies par l'utilisateur, afin de réduire le changement de contexte. |
 | **Justification de la permission `storage`** | Sauvegarder localement le focus en cours, la file de priorités et l'historique des items terminés. Aucune donnée n'est transmise. |
 | **Justification de l'accès à `claude.ai`** | Afficher un bandeau de rappel du focus en cours lors de l'ouverture d'une nouvelle conversation. Aucun contenu de page n'est lu ni transmis. |
+| **Justification de la permission `scripting`** | Enregistrer la carte de rappel du focus sur les autres sites, uniquement après activation de l'option dans la page Options et accord de l'accès optionnel aux sites. Aucun contenu de page n'est lu ni transmis. |
+| **Justification de l'accès optionnel (`https://*/*`, `http://*/*`)** | Demandé à l'exécution uniquement quand l'utilisateur active « rappel sur tous les sites » ; sert exclusivement à afficher la carte de rappel. Retiré quand l'option est désactivée. |
+| **Justification de `nativeMessaging` (optionnelle)** | Demandée à l'exécution uniquement au clic sur « Générer avec Claude », pour joindre un hôte local installé par l'utilisateur lui-même. Inerte sinon. |
 | **Utilisation des données** | Cocher « Cette extension ne collecte pas et n'utilise pas les données utilisateur ». |
-| **URL de la politique de confidentialité** | *(à renseigner — voir `airlock-extension/legal/README.md`)* |
+| **URL de la politique de confidentialité** | *(à renseigner — voir `legal/README.md`)* |
