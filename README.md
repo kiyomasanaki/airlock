@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.webp" alt="Airlock" width="160">
+  <img src="logo.webp" alt="Airlock — ADHD focus buffer &amp; impulse control" width="100%">
 </p>
 
 # Airlock
