@@ -13,6 +13,9 @@
 
 const AIRLOCK_KEY = 'airlock_state';
 const AIRLOCK_DONE_MAX = 1000;      // full history lives on the Options page
+// "Ne plus afficher" on the unbound-shortcut warning (Options page). Kept apart
+// from airlock_state: a UI preference, not user data, so never exported.
+const AIRLOCK_SHORTCUT_DISMISSED_KEY = 'shortcutWarningDismissed';
 
 function airlockBlank() {
   return { focus: null, queue: [], done: [], pending: null, methodologies: {} };
@@ -68,4 +71,31 @@ function airlockMutate(fn, cb) {
     fn(s);
     chrome.storage.local.set({ [AIRLOCK_KEY]: s }, () => cb && cb(s));
   });
+}
+
+// Shortcut the manifest asks for on this platform (it has a Mac-specific key).
+function airlockSuggestedShortcut() {
+  try {
+    const sk = chrome.runtime.getManifest().commands._execute_action.suggested_key;
+    const mac = /Mac/i.test(navigator.platform || navigator.userAgent);
+    return (mac && sk.mac) || sk.default || '';
+  } catch (e) { return ''; }
+}
+
+// Shortcut actually bound to the popup, or '' when Chrome left it unassigned
+// (the suggested key is skipped if the browser or another extension holds it).
+// Never hardcode it in UI text: the user can change it at any time.
+// Content scripts have no chrome.commands, so they ask the service worker.
+function airlockShortcut(cb) {
+  if (chrome.commands) {
+    chrome.commands.getAll(cmds => {
+      const c = cmds.find(x => x.name === '_execute_action');
+      cb((c && c.shortcut) || '');
+    });
+  } else {
+    chrome.runtime.sendMessage({ type: 'airlock_shortcut' }, r => {
+      void chrome.runtime.lastError;
+      cb((r && r.shortcut) || '');
+    });
+  }
 }
