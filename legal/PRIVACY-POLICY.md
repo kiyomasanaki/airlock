@@ -91,9 +91,9 @@ If we ever change this policy (e.g., if a future version adds cloud sync as an o
 ## Contact
 
 For privacy questions or concerns:
-- Developer: keyamasabaya
-- Email: github@wespify.com
-- Website: https://briake.xyz
+- Developer: kiyomasanaki
+- Email: kiyo_masanaki_ghadmin@devops-evo.aleeas.com
+- Website: https://kiyomasanaki.github.io/airlock/
 
 ## GDPR / CCPA compliance
 
