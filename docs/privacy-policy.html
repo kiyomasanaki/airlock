@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy - Airlock Extension</title>
+<link rel="preload" href="fonts/montserrat-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: "Montserrat Variable"; font-style: normal; font-weight: 100 900;
+  font-display: swap; src: url(fonts/montserrat-latin-wght-normal.woff2) format("woff2-variations"); }
+:root {
+  --background: #101010; --card: #1414149c; --white: #dfdfdf;
+  --white-icon: #f3f3f398; --white-icon-tr: #f3f3f310;
+  --yellow: #ffd84d; --violet: #a476ff;
+  --gradient: linear-gradient(135deg, var(--yellow), #ff9478 50%, var(--violet));
+  color-scheme: dark;
+}
+@supports (background: linear-gradient(in oklch 135deg, red, blue)) {
+  :root { --gradient: linear-gradient(in oklch 135deg, var(--yellow), var(--violet)); }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 110px; }
+body { margin: 0; min-height: 100vh; color: var(--white); line-height: 1.7;
+  font-family: "Montserrat Variable", ui-sans-serif, system-ui, sans-serif;
+  background:
+    radial-gradient(55rem 38rem at -5% -10%, #ffd84d40, transparent 62%),
+    radial-gradient(60rem 45rem at 105% 110%, #a476ff55, transparent 62%),
+    var(--background);
+  background-attachment: fixed; }
+::selection { background: var(--violet); color: var(--background); }
+a { color: var(--white); text-decoration: none;
+  background: var(--gradient) bottom / 100% 1px no-repeat; transition: color .3s; }
+a:hover { color: var(--yellow); }
+
+/* floating pill nav: top on desktop, bottom on phones (like the original) */
+nav { position: fixed; left: 50%; transform: translateX(-50%); z-index: 100;
+  top: 24px; width: min(720px, calc(100% - 32px));
+  display: flex; justify-content: center; gap: 6px; padding: 6px;
+  border: 1px solid var(--white-icon-tr); border-radius: 1rem;
+  background: #101010cc; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+nav a { flex: 0 1 auto; padding: 8px 14px; border-radius: .75rem; background: none;
+  color: var(--white-icon); font-size: 14px; font-weight: 500; text-align: center; white-space: nowrap; }
+nav a:hover { color: #fff; background: var(--white-icon-tr); }
+nav a[aria-current] { color: var(--background); background: var(--gradient); font-weight: 600; }
+
+main { max-width: 760px; margin: 0 auto; padding: 120px 16px 64px; }
+
+/* hero: the gradient panel */
+.hero { position: relative; overflow: hidden; border-radius: 1.5rem; padding: 40px 32px;
+  background: var(--gradient); color: var(--background); }
+.hero::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(30rem 18rem at 85% 0%, #ffffff40, transparent 70%); }
+.hero .eyebrow { position: relative; margin: 0 0 12px; font-size: 13px; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; opacity: .65; }
+.hero h1 { margin: 0; font-size: clamp(32px, 6vw, 52px); line-height: 1.05; font-weight: 600;
+  letter-spacing: -.02em; text-wrap: balance; }
+.hero p { margin: 16px 0 0; font-weight: 500; color: var(--background); }
+.hero strong { font-weight: 700; color: var(--background); }
+
+/* one hairline card per section */
+section { margin-top: 20px; padding: 28px 28px 20px; border: 1px solid var(--white-icon-tr);
+  border-radius: 1rem; background: var(--card); }
+h2 { margin: 0 0 12px; font-size: 22px; line-height: 1.3; font-weight: 600;
+  display: flex; align-items: center; gap: 12px; }
+h2::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--gradient); box-shadow: 0 0 14px #ffd84d66; }
+h3 { margin: 24px 0 8px; font-size: 17px; font-weight: 600;
+  background: var(--gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+p, li { color: #dfdfdfd9; }
+strong { color: #fff; font-weight: 600; }
+ul { padding: 0; list-style: none; }
+li { position: relative; margin: 8px 0; padding-left: 22px; }
+li::before { content: ""; position: absolute; left: 2px; top: .7em; width: 8px; height: 2px;
+  border-radius: 2px; background: var(--gradient); }
+code { font-size: .88em; padding: 2px 6px; border-radius: 6px; overflow-wrap: anywhere;
+  background: var(--white-icon-tr); border: 1px solid var(--white-icon-tr); color: #fff; }
+
+/* index cards */
+.cards { display: grid; gap: 16px; margin-top: 20px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.card { display: block; padding: 22px; border: 1px solid var(--white-icon-tr); border-radius: 1rem;
+  background: var(--card); transition: border-color .3s, transform .3s; }
+.card:hover { color: var(--white); border-color: #ffd84d55; transform: translateY(-2px); }
+.card b { display: block; font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.card span { color: var(--white-icon); font-size: 14px; }
+
+footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--white-icon-tr);
+  color: var(--white-icon); font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px 20px;
+  justify-content: space-between; }
+
+@media (max-width: 640px) {
+  nav { top: auto; bottom: 12px; }
+  nav a { flex: 1 1 0; padding: 8px 6px; font-size: 12px; white-space: normal; line-height: 1.3; }
+  main { padding: 24px 16px 110px; }
+  .hero { padding: 28px 22px; }
+  section { padding: 22px 18px 14px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<nav>
+<a href="index.html">Airlock</a>
+<a href="privacy-policy.html" aria-current="page">Privacy policy</a>
+<a href="legal-notice.html">Legal notice</a>
+</nav>
+<main>
+<header class="hero">
+<p class="eyebrow">Airlock</p>
+<h1>Privacy Policy - Airlock Extension</h1>
+<p><strong>Last updated: November 3, 2026</strong></p>
+</header>
+<section>
+<h2>Summary</h2>
+<p>Airlock stores everything locally. <strong>We operate no server, collect nothing, and have no access to your data.</strong> All information you enter (impulses, focus items, completed tasks) is stored exclusively in your browser's local storage on your machine.</p>
+<p><strong>One optional feature is an exception, and it is off unless you install it:</strong> the methodology generator sends the text of a single impulse to Anthropic, through the Claude Code CLI running on your own machine, under your own Anthropic account. See "Methodology generation" below. If you never install the native host, no data ever leaves your device.</p>
+</section>
+<section>
+<h2>Data we collect</h2>
+<p>We do NOT collect any data. The extension stores the following information locally on your device only:</p>
+<ul>
+<li>Text you type as "impulses", "focus", or queue items</li>
+<li>Timestamps of when items are created and completed</li>
+<li>Generated methodologies and which of their steps you have ticked off</li>
+<li>Your preferences (keyboard shortcut, display options)</li>
+</ul>
+<p>This data is stored using the Chrome <code>storage.local</code> API and remains on your computer. It is never transmitted to us or to any server we control: we have none.</p>
+</section>
+<section>
+<h2>Methodology generation (optional)</h2>
+<p>Airlock can turn an impulse into a numbered methodology. This feature is <strong>not active by default</strong>: it requires you to separately install a native messaging host on your machine, and to have <a href="https://claude.com/claude-code">Claude Code</a> installed.</p>
+<p>When, and only when, you click "Generate with Claude":</p>
+<ul>
+<li>The text of <strong>that single impulse</strong> is placed into a prompt and passed to the <code>claude</code> command-line tool running locally on your machine</li>
+<li>That tool sends the prompt to <strong>Anthropic</strong>, using <strong>your own Anthropic account and its own authentication</strong>. Airlock has no account, no API key, and no server in this path</li>
+<li>The returned steps are stored locally, like the rest of your data</li>
+</ul>
+<p>What this means concretely:</p>
+<ul>
+<li>Your other impulses, your queue and your history are <strong>never</strong> sent, only the one impulse you act on</li>
+<li>The data goes to Anthropic, so <strong>Anthropic's privacy policy and terms apply to that exchange</strong>: <a href="https://www.anthropic.com/legal/privacy">https://www.anthropic.com/legal/privacy</a></li>
+<li>Airlock never sees the prompt or the response. Nothing is logged, and the native host writes nothing to disk</li>
+<li>If you do not install the native host, this feature is inert and no network call is ever made</li>
+</ul>
+<p>If you want the extension to stay strictly local, simply do not install the native host.</p>
+</section>
+<section>
+<h2>Data we do NOT collect</h2>
+<ul>
+<li>We do not collect personally identifiable information (PII)</li>
+<li>We do not collect IP addresses</li>
+<li>We do not use analytics or telemetry</li>
+<li>We do not use cookies</li>
+<li>We do not share data with third parties</li>
+<li>We do not sell data (we have no data to sell)</li>
+<li>We do not use advertising networks</li>
+<li>We do not access your browsing history</li>
+<li>We do not read, log or transmit content from websites you visit. The extension only adds its own reminder card: on claude.ai pages, and on other websites only if you turn that option on</li>
+</ul>
+</section>
+<section>
+<h2>Permissions explained</h2>
+<p>The extension requests the following Chrome permissions at installation:</p>
+<ul>
+<li><strong><code>storage</code></strong>: To save your impulses and focus items locally on your device</li>
+<li><strong><code>scripting</code></strong>: To show the focus reminder card on other websites, only once you have turned that option on and granted site access (see below). On its own it gives access to no website</li>
+<li><strong><code>host_permissions: https://claude.ai/*</code></strong>: To display a contextual banner on claude.ai pages showing your current focus. The extension does not read, log, or transmit any content from claude.ai</li>
+</ul>
+<p>And these <strong>optional</strong> permissions, which Chrome only asks you for when you use the matching feature, and which you can revoke at any time:</p>
+<ul>
+<li><strong>Access to all websites (<code>https://*/*</code>, <code>http://*/*</code>)</strong>: Requested only if you enable "Focus reminder on every site" on the Options page. Used solely to display the reminder card; no page content is read, logged or transmitted. Turning the option off removes the permission</li>
+<li><strong><code>nativeMessaging</code></strong>: Requested only the first time you click "Generate with Claude". Used to reach the optional local host that runs the Claude Code CLI. Without that host installed, it does nothing</li>
+</ul>
+</section>
+<section>
+<h2>Your rights</h2>
+<p>Because your data stays on your device (barring the optional methodology generation described above):</p>
+<ul>
+<li><strong>Right to access</strong>: All your data is visible in the extension popup and on the options page</li>
+<li><strong>Right to erasure</strong>: Click "Reset all" in the popup, or uninstall the extension to delete all data permanently</li>
+<li><strong>Right to portability</strong>: The options page lets you export all your data as JSON at any time, and import it back</li>
+<li><strong>Right to rectification</strong>: Edit or delete any item directly in the extension</li>
+</ul>
+</section>
+<section>
+<h2>Data retention</h2>
+<p>Data is retained on your device until you delete it manually or uninstall the extension. There is no server-side retention because we have no servers.</p>
+</section>
+<section>
+<h2>Children's privacy</h2>
+<p>The extension is not directed at children under 13. We do not knowingly collect any information from anyone, including children.</p>
+</section>
+<section>
+<h2>Security</h2>
+<p>Your data is protected by Chrome's standard local storage isolation. We recommend keeping your operating system and Chrome browser up to date.</p>
+</section>
+<section>
+<h2>Changes to this policy</h2>
+<p>If we ever change this policy (e.g., if a future version adds cloud sync as an optional feature), we will update this document and notify users via the extension update notes. Cloud sync, if ever added, will always be opt-in.</p>
+</section>
+<section>
+<h2>Contact</h2>
+<p>For privacy questions or concerns:</p>
+<ul>
+<li>Developer: kiyomasanaki</li>
+<li>Email: github@wespify.com</li>
+<li>Website: <a href="https://briake.xyz">https://briake.xyz</a></li>
+</ul>
+</section>
+<section>
+<h2>GDPR / CCPA compliance</h2>
+<p>Because the extension collects no personal data and the developer operates no server, GDPR (EU) and CCPA (California) obligations on the developer are minimal. You retain full control of your data at all times. The lawful basis for the local processing performed by the extension on your device is your consent, expressed by installing and using the extension.</p>
+<p>Methodology generation is the only transfer of data off your device. It is optional, requires a deliberate installation on your part, and runs under your own Anthropic account: the controller for that processing is Anthropic, not the developer of Airlock. Its lawful basis is your consent, expressed by installing the native host and then by each click on "Generate with Claude".</p>
+</section>
+<footer><span>Airlock · MIT</span><a href="https://github.com/kiyomasanaki/airlock">github.com/kiyomasanaki/airlock</a></footer>
+</main>
+</body>
+</html>
