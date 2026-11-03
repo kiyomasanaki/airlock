@@ -14,31 +14,46 @@ const EVERYWHERE_ORIGINS = ['https://*/*', 'http://*/*'];
 
 // ─── toolbar icon ───────────────────────────────────────────────────────
 
-function refreshAction(raw) {
+// There is no chrome.commands.onChanged: the shortcut is re-read whenever the
+// icon is refreshed (install, startup, any data change, Options page opened).
+// A "!" badge flags an unbound shortcut, unless the user chose to ignore it.
+function refreshAction(raw, dismissed) {
   const s = airlockNormalize(raw);
-  const lines = [];
+  airlockShortcut(shortcut => {
+    const lines = [];
+    const warnShortcut = !shortcut && !dismissed;
 
-  if (s.focus) {
-    lines.push(`Focus : ${s.focus}`);
-    const next = airlockNextStep(s, s.focus);
-    if (next) lines.push(`Prochaine étape : ${next}`);
-    lines.push(s.queue.length ? `${s.queue.length} en file` : 'file vide');
-  } else {
-    lines.push('Aucun focus — clique ou Ctrl+Shift+Q pour capturer');
-  }
-  if (s.pending) lines.push(`En attente de décision : ${s.pending}`);
+    if (s.focus) {
+      lines.push(`Focus : ${s.focus}`);
+      const next = airlockNextStep(s, s.focus);
+      if (next) lines.push(`Prochaine étape : ${next}`);
+      lines.push(s.queue.length ? `${s.queue.length} en file` : 'file vide');
+    } else {
+      lines.push(shortcut
+        ? `Aucun focus : clique ou ${shortcut} pour capturer`
+        : 'Aucun focus : clique pour capturer');
+    }
+    if (s.pending) lines.push(`En attente de décision : ${s.pending}`);
+    if (warnShortcut) {
+      lines.push('Raccourci clavier non assigné (déjà pris par Chrome, une autre extension ou une application) : choisis-en un dans les Options');
+    }
 
-  chrome.action.setTitle({ title: 'Airlock\n' + lines.join('\n') });
-  chrome.action.setBadgeBackgroundColor({ color: '#f2b53c' });
-  chrome.action.setBadgeText({ text: s.pending ? '?' : '' });
+    chrome.action.setTitle({ title: 'Airlock\n' + lines.join('\n') });
+    // a capture waiting for its answer comes first: it is the core loop
+    chrome.action.setBadgeBackgroundColor({ color: s.pending ? '#f2b53c' : '#e5484d' });
+    chrome.action.setBadgeText({ text: s.pending ? '?' : warnShortcut ? '!' : '' });
+  });
 }
 
 function refreshFromStorage() {
-  chrome.storage.local.get([AIRLOCK_KEY], r => refreshAction(r[AIRLOCK_KEY]));
+  chrome.storage.local.get([AIRLOCK_KEY, AIRLOCK_SHORTCUT_DISMISSED_KEY],
+    r => refreshAction(r[AIRLOCK_KEY], !!r[AIRLOCK_SHORTCUT_DISMISSED_KEY]));
 }
 
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === 'local' && changes[AIRLOCK_KEY]) refreshAction(changes[AIRLOCK_KEY].newValue);
+  if (area === 'local' && (changes[AIRLOCK_KEY] || changes[AIRLOCK_SHORTCUT_DISMISSED_KEY])) {
+    refreshFromStorage();
+  }
 });
 
 // ─── optional reminder on every site ────────────────────────────────────
@@ -74,9 +89,28 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
     syncEverywhere().then(() => reply({ ok: true }));
     return true;
   }
+  // content scripts have no chrome.commands (see airlockShortcut in state.js)
+  if (msg && msg.type === 'airlock_shortcut') {
+    airlockShortcut(shortcut => reply({ shortcut }));
+    return true;
+  }
+  // a web page cannot open chrome:// URLs itself (shortcut warning, content.js)
+  if (msg && msg.type === 'airlock_open_shortcuts') {
+    chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+  }
+  // the Options page re-checks the shortcut each time it is opened
+  if (msg && msg.type === 'airlock_check_shortcut') refreshFromStorage();
 });
 
 // ─── startup ────────────────────────────────────────────────────────────
 
-chrome.runtime.onInstalled.addListener(() => { refreshFromStorage(); syncEverywhere(); });
+chrome.runtime.onInstalled.addListener(details => {
+  refreshFromStorage();
+  syncEverywhere();
+  // Chrome only binds the suggested key at install, and skips it on conflict.
+  // Say so once, right away; later, only the badge remains.
+  if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+    airlockShortcut(shortcut => { if (!shortcut) chrome.runtime.openOptionsPage(); });
+  }
+});
 chrome.runtime.onStartup.addListener(() => { refreshFromStorage(); syncEverywhere(); });

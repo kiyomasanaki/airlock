@@ -26,6 +26,7 @@ let pos = null;                     // { left, top } une fois deplacee
 let dragging = false;
 let lastSig = null;                 // evite de reconstruire la carte pour rien
 let dismissed = false;              // masquee par l'utilisateur sur cette page
+let shortcut = '';                  // raccourci reellement assigne, '' si aucun
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -148,7 +149,7 @@ function createBanner(state) {
 
   // Une ecriture sans effet visible (position, historique...) ne doit pas
   // rejouer l'animation d'entree.
-  const sig = JSON.stringify([hasFocus && state.focus, next, state.queue.length, isNewChat]);
+  const sig = JSON.stringify([hasFocus && state.focus, next, state.queue.length, isNewChat, shortcut]);
   if (sig === lastSig && bannerEl && bannerEl.isConnected) return;
   lastSig = sig;
 
@@ -168,7 +169,7 @@ function createBanner(state) {
 
   const close = el('button', 'airlock-close', '×');
   close.type = 'button';
-  close.title = 'Masquer — Ctrl+Shift+Q pour rouvrir Airlock';
+  close.title = shortcut ? `Masquer (${shortcut} pour rouvrir Airlock)` : 'Masquer';
   close.setAttribute('aria-label', 'Masquer le rappel Airlock');
   close.addEventListener('click', () => {
     dismissed = true;
@@ -210,8 +211,9 @@ function createBanner(state) {
       'Capture ton intention dans le sas avant de plonger dans une nouvelle conversation.'));
 
     const meta = el('div', 'airlock-meta');
-    const kbd = el('kbd', null, 'Ctrl+Shift+Q');
-    meta.appendChild(kbd);
+    meta.appendChild(shortcut
+      ? el('kbd', null, shortcut)
+      : el('span', null, 'clique l\'icône Airlock'));
     body.appendChild(meta);
   }
 
@@ -246,6 +248,75 @@ setTimeout(() => {
   setInterval(pulse, PULSE_EVERY);
 }, PULSE_DELAY);
 
+// ─── raccourci inactif ──────────────────────────────────────────────────
+
+// Quand le raccourci est assigne, Chrome le consomme et la page ne recoit
+// jamais la touche. Si elle arrive jusqu'ici, c'est qu'il n'est relie a rien
+// (pris par une autre extension ou application, ou change par l'utilisateur) :
+// on le dit au lieu de laisser croire que l'extension est en panne.
+const SUGGESTED = airlockSuggestedShortcut();
+
+function comboMatches(e, combo) {
+  const parts = combo.split('+');
+  const key = parts.pop();
+  const ctrl = parts.some(p => p === 'Ctrl' || p === 'Command' || p === 'MacCtrl');
+  const pressed = e.key === ' ' ? 'Space' : e.key;
+  return (e.ctrlKey || e.metaKey) === ctrl
+    && e.altKey === parts.includes('Alt')
+    && e.shiftKey === parts.includes('Shift')
+    && pressed.toUpperCase() === key.toUpperCase();
+}
+
+let warningEl = null;
+let warningTimer = null;
+
+function showShortcutWarning(bound) {
+  if (warningEl) warningEl.remove();
+  clearTimeout(warningTimer);
+
+  const box = el('div', 'airlock-warning');
+  box.id = 'airlock-shortcut-warning';
+  box.setAttribute('role', 'alert');
+
+  const head = el('div', 'airlock-warning-head');
+  head.appendChild(el('p', 'airlock-warning-title', bound
+    ? 'Ce n\'est plus le raccourci d\'Airlock'
+    : 'Le raccourci Airlock n\'est pas actif'));
+  const close = el('button', 'airlock-warning-close', '×');
+  close.type = 'button';
+  close.setAttribute('aria-label', 'Fermer');
+  close.addEventListener('click', () => { box.remove(); warningEl = null; });
+  head.appendChild(close);
+  box.appendChild(head);
+
+  box.appendChild(el('p', 'airlock-warning-text', bound
+    ? `${SUGGESTED} n'ouvre plus Airlock : le raccourci actuel est ${bound}.`
+    : `${SUGGESTED} n'est relié à aucune action. Une autre extension ou application l'utilise peut-être : choisis un raccourci libre dans les réglages de Chrome.`));
+  box.appendChild(el('p', 'airlock-warning-ok',
+    'L\'extension fonctionne, seul le raccourci est à régler.'));
+
+  const open = el('button', 'airlock-warning-btn', 'Vérifier les raccourcis');
+  open.type = 'button';
+  open.addEventListener('click', () => {
+    if (alive()) chrome.runtime.sendMessage({ type: 'airlock_open_shortcuts' }, () => void chrome.runtime.lastError);
+  });
+  box.appendChild(open);
+
+  document.body.appendChild(box);
+  warningEl = box;
+  warningTimer = setTimeout(() => { box.remove(); if (warningEl === box) warningEl = null; }, 15000);
+}
+
+window.addEventListener('keydown', e => {
+  if (e.repeat || !SUGGESTED || !comboMatches(e, SUGGESTED) || !alive()) return;
+  airlockShortcut(bound => {
+    if (bound === SUGGESTED) return;          // assigne : la touche ne serait pas arrivee ici
+    shortcut = bound;
+    showShortcutWarning(bound);
+    refresh();
+  });
+}, true);
+
 // ─── synchronisation ────────────────────────────────────────────────────
 
 chrome.storage.onChanged.addListener((changes, area) => {
@@ -274,3 +345,4 @@ setInterval(() => {
 window.addEventListener('resize', () => { if (bannerEl) applyPos(bannerEl); });
 
 refresh();
+if (alive()) airlockShortcut(s => { shortcut = s; refresh(); });

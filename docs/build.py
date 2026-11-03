@@ -5,9 +5,10 @@ Standard library only, like the rest of the project. Handles the subset of
 Markdown the legal documents use: headings, paragraphs, "-" lists, bold,
 italics, inline code, [links](url), <autolinks> and bare URLs.
 
-Look: dark minimal (after darkminimal.vercel.app: #101010 background,
-Montserrat, floating pill nav, hairline-bordered rounded cards) with a
-diagonal yellow-to-violet gradient as the dominant colour.
+Look: the darkminimal.vercel.app template, followed as is (#101010
+background, Montserrat, floating nav with active dot, hairline-separated
+sections with a small accent label above a large title). The only change:
+the template's shining violet text (.shiny-sec) shines violet to yellow.
 
 Run from anywhere: python3 docs/build.py
 """
@@ -20,101 +21,114 @@ REPO = "https://github.com/kiyomasanaki/airlock"
 
 # source file -> (output file, lang, nav label)
 PAGES = {
-    "privacy-policy.md": ("privacy-policy.html", "en", "Privacy policy"),
+    "privacy-policy.md": ("privacy-policy.html", "en", "Privacy"),
     "legal-notice.md": ("legal-notice.html", "en", "Legal notice"),
 }
 
 CSS = """
 @font-face { font-family: "Montserrat Variable"; font-style: normal; font-weight: 100 900;
   font-display: swap; src: url(fonts/montserrat-latin-wght-normal.woff2) format("woff2-variations"); }
-:root {
-  --background: #101010; --card: #1414149c; --white: #dfdfdf;
-  --white-icon: #f3f3f398; --white-icon-tr: #f3f3f310;
-  --yellow: #ffd84d; --violet: #a476ff;
-  --gradient: linear-gradient(135deg, var(--yellow), #ff9478 50%, var(--violet));
-  color-scheme: dark;
+:root { --background: #101010; --sec: #a476ff; --yellow: #ffd84d; --white: #dfdfdf;
+  --white-icon: #f3f3f398; --white-icon-tr: #f3f3f310; color-scheme: dark; }
+* { box-sizing: border-box; margin: 0; padding: 0;
+  font-family: "Montserrat Variable", -apple-system, system-ui, sans-serif; }
+html { -webkit-text-size-adjust: 100%; line-height: 1.5; scroll-padding-top: 100px; }
+body { background: var(--background); color: var(--white); padding: 0 36px 70px; }
+::selection { background-color: var(--sec); color: var(--background); }
+a { color: inherit; text-decoration: inherit; }
+
+/* the template's shining accent text, violet to yellow instead of violet to white */
+.shiny-sec { background: linear-gradient(135deg, var(--sec) 0%, var(--yellow) 50%, var(--sec) 100%) 0 0 / 200% 100%;
+  color: transparent; -webkit-background-clip: text; background-clip: text; animation: shine 3s linear infinite; }
+@keyframes shine { 0% { background-position: 100%; } 30%, 70% { background-position: 0%; } }
+
+/* floating nav: bottom on phones, top on desktop, active dot like the template */
+.nav-wrap { display: flex; justify-content: center; width: 100%; }
+nav { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 100; width: 80%;
+  background: var(--background); border: 1px solid transparent; backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); transition: all .5s ease-in-out; }
+nav.scrolling { border-color: #ffffff10; border-radius: 1rem 1rem 0 0; }
+nav ul { list-style: none; display: flex; justify-content: space-between; gap: 24px; padding: 12px; }
+nav li { flex: 1; text-align: center; }
+nav a { position: relative; display: inline-block; color: var(--white-icon); font-size: 12px; transition: color .3s; }
+nav a:hover, nav a.active { color: #fff; }
+nav a .dot { display: none; position: absolute; left: -24px; top: 50%; width: 8px; height: 8px; border-radius: 50%;
+  background: #A9FF5B; transform: translateY(-50%) scale(0); opacity: 0; transition: all .3s; }
+nav a.active .dot { transform: translateY(-50%) scale(1); opacity: 1; }
+
+.wrap { max-width: 64rem; margin: 0 auto; }
+
+/* hero */
+.hero { margin-top: 48px; padding-bottom: 56px; }
+.hero .hi { font-size: 1rem; color: var(--white-icon); margin-bottom: 16px; }
+.hero .row { display: flex; flex-direction: column; gap: 16px; }
+.hero h1 { color: var(--white); font-size: 3rem; line-height: 1; font-weight: 500; text-wrap: pretty; }
+.hero .lead { font-size: 1rem; color: var(--white-icon); }
+.hero .pill-row { display: flex; gap: 8px; padding-top: 12px; }
+
+/* sections */
+section { padding: 48px 0; border-top: 1px solid #ffffff10; color: var(--white); }
+section h2 { font-size: 1.125rem; line-height: 1.75rem; margin-bottom: 8px; font-weight: 400; }
+section h3 { font-size: 2.25rem; line-height: 2.5rem; font-weight: 500; margin-bottom: 32px; }
+section h4 { font-size: 1.25rem; font-weight: 600; margin: 24px 0 8px; }
+.prose { color: var(--white-icon); max-width: 48rem; }
+.prose p, .prose ul { margin-bottom: 16px; }
+.prose ul { list-style: none; }
+.prose li { position: relative; padding-left: 20px; margin-bottom: 8px; }
+.prose li::before { content: ""; position: absolute; left: 0; top: .65em; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--white-icon); }
+.prose strong { color: var(--white); font-weight: 600; }
+.prose a { color: var(--white); text-decoration: underline; text-decoration-color: var(--white-icon);
+  text-underline-offset: 3px; overflow-wrap: anywhere; transition: text-decoration-color .3s; }
+.prose a:hover { text-decoration-color: var(--white); }
+.prose code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9em; color: var(--white);
+  background: #1414149c; border: 1px solid var(--white-icon-tr); border-radius: 6px; padding: 1px 6px; overflow-wrap: anywhere; }
+
+/* buttons and cards, as in the template */
+.icon-btn { display: inline-flex; align-items: center; gap: 8px; color: var(--white-icon); border: 1px solid var(--white-icon-tr);
+  padding: 12px 16px; border-radius: .75rem; background: #1414149c; transition: all .3s ease-in-out; }
+.icon-btn:hover { color: #fff; background: var(--white-icon-tr); }
+.pill { border-radius: 9999px; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+.card { display: block; border: 1px solid var(--white-icon-tr); border-radius: 1rem; background: #1414149c;
+  padding: 28px; transition: all .3s ease-in-out; }
+.card:hover { background: var(--white-icon-tr); }
+.card h4 { font-size: 1.5rem; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+.card span { font-size: .875rem; color: var(--white-icon); }
+
+footer { padding: 48px 0; border-top: 1px solid #ffffff10; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center;
+  color: var(--white-icon); font-size: .875rem; }
+footer a:hover { color: var(--white); }
+
+@media (min-width: 640px) { body { padding-left: 112px; padding-right: 112px; } }
+@media (min-width: 768px) {
+  nav { top: 24px; bottom: auto; }
+  nav.scrolling { border-radius: 9999px; }
+  nav ul { justify-content: center; gap: 48px; }
+  nav li { flex: none; }
+  nav a { font-size: 1rem; }
+  nav a .dot { display: block; }
+  body { padding-bottom: 0; }
+  .hero { margin-top: 0; padding: 144px 0 56px; }
+  .hero .hi { font-size: 1.125rem; }
+  .hero h1 { font-size: 3.75rem; }
+  .hero .lead { font-size: 1.5rem; line-height: 2rem; }
+  .hero .pill-row { padding-top: 24px; }
+  section h3 { font-size: 3rem; line-height: 1; }
+  .grid { grid-template-columns: 1fr 1fr; }
 }
-@supports (background: linear-gradient(in oklch 135deg, red, blue)) {
-  :root { --gradient: linear-gradient(in oklch 135deg, var(--yellow), var(--violet)); }
+@media (min-width: 1024px) {
+  body { padding-left: 80px; padding-right: 80px; }
+  .hero .row { flex-direction: row; align-items: center; gap: 48px; }
+  .hero h1 { flex: none; }
 }
-* { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-padding-top: 110px; }
-body { margin: 0; min-height: 100vh; color: var(--white); line-height: 1.7;
-  font-family: "Montserrat Variable", ui-sans-serif, system-ui, sans-serif;
-  background:
-    radial-gradient(55rem 38rem at -5% -10%, #ffd84d40, transparent 62%),
-    radial-gradient(60rem 45rem at 105% 110%, #a476ff55, transparent 62%),
-    var(--background);
-  background-attachment: fixed; }
-::selection { background: var(--violet); color: var(--background); }
-a { color: var(--white); text-decoration: none;
-  background: var(--gradient) bottom / 100% 1px no-repeat; transition: color .3s; }
-a:hover { color: var(--yellow); }
-
-/* floating pill nav: top on desktop, bottom on phones (like the original) */
-nav { position: fixed; left: 50%; transform: translateX(-50%); z-index: 100;
-  top: 24px; width: min(720px, calc(100% - 32px));
-  display: flex; justify-content: center; gap: 6px; padding: 6px;
-  border: 1px solid var(--white-icon-tr); border-radius: 1rem;
-  background: #101010cc; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
-nav a { flex: 0 1 auto; padding: 8px 14px; border-radius: .75rem; background: none;
-  color: var(--white-icon); font-size: 14px; font-weight: 500; text-align: center; white-space: nowrap; }
-nav a:hover { color: #fff; background: var(--white-icon-tr); }
-nav a[aria-current] { color: var(--background); background: var(--gradient); font-weight: 600; }
-
-main { max-width: 760px; margin: 0 auto; padding: 120px 16px 64px; }
-
-/* hero: the gradient panel */
-.hero { position: relative; overflow: hidden; border-radius: 1.5rem; padding: 40px 32px;
-  background: var(--gradient); color: var(--background); }
-.hero::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(30rem 18rem at 85% 0%, #ffffff40, transparent 70%); }
-.hero .eyebrow { position: relative; margin: 0 0 12px; font-size: 13px; font-weight: 600; letter-spacing: .14em;
-  text-transform: uppercase; opacity: .65; }
-.hero h1 { margin: 0; font-size: clamp(32px, 6vw, 52px); line-height: 1.05; font-weight: 600;
-  letter-spacing: -.02em; text-wrap: balance; }
-.hero p { margin: 16px 0 0; font-weight: 500; color: var(--background); }
-.hero strong { font-weight: 700; color: var(--background); }
-
-/* one hairline card per section */
-section { margin-top: 20px; padding: 28px 28px 20px; border: 1px solid var(--white-icon-tr);
-  border-radius: 1rem; background: var(--card); }
-h2 { margin: 0 0 12px; font-size: 22px; line-height: 1.3; font-weight: 600;
-  display: flex; align-items: center; gap: 12px; }
-h2::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%;
-  background: var(--gradient); box-shadow: 0 0 14px #ffd84d66; }
-h3 { margin: 24px 0 8px; font-size: 17px; font-weight: 600;
-  background: var(--gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
-p, li { color: #dfdfdfd9; }
-strong { color: #fff; font-weight: 600; }
-ul { padding: 0; list-style: none; }
-li { position: relative; margin: 8px 0; padding-left: 22px; }
-li::before { content: ""; position: absolute; left: 2px; top: .7em; width: 8px; height: 2px;
-  border-radius: 2px; background: var(--gradient); }
-code { font-size: .88em; padding: 2px 6px; border-radius: 6px; overflow-wrap: anywhere;
-  background: var(--white-icon-tr); border: 1px solid var(--white-icon-tr); color: #fff; }
-
-/* index cards */
-.cards { display: grid; gap: 16px; margin-top: 20px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
-.card { display: block; padding: 22px; border: 1px solid var(--white-icon-tr); border-radius: 1rem;
-  background: var(--card); transition: border-color .3s, transform .3s; }
-.card:hover { color: var(--white); border-color: #ffd84d55; transform: translateY(-2px); }
-.card b { display: block; font-size: 18px; font-weight: 600; margin-bottom: 4px; }
-.card span { color: var(--white-icon); font-size: 14px; }
-
-footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--white-icon-tr);
-  color: var(--white-icon); font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px 20px;
-  justify-content: space-between; }
-
-@media (max-width: 640px) {
-  nav { top: auto; bottom: 12px; }
-  nav a { flex: 1 1 0; padding: 8px 6px; font-size: 12px; white-space: normal; line-height: 1.3; }
-  main { padding: 24px 16px 110px; }
-  .hero { padding: 28px 22px; }
-  section { padding: 22px 18px 14px; }
-}
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { .shiny-sec { animation: none; } * { transition: none !important; } }
 """
+
+# the template's nav turns into a bordered pill once the page scrolls
+SCRIPT = """addEventListener('scroll', () =>
+  document.querySelector('nav').classList.toggle('scrolling', scrollY > 10), { passive: true });"""
 
 
 def inline(text):
@@ -137,13 +151,15 @@ def inline(text):
 
 
 def to_html(md):
-    """Body HTML split into the hero (title + lead lines) and one <section> per h2."""
+    """Hero from the title and lead lines, then one template section per "##"."""
     out, para, items = [], [], []
-    in_section = False
+    lead, title = [], ""
+    count = 0
 
     def flush():
         if para:
-            out.append(f"<p>{inline(' '.join(para))}</p>")
+            text = inline(" ".join(para))
+            (lead if not count else out).append(text if not count else f"<p>{text}</p>")
             para.clear()
         if items:
             out.append("<ul>\n" + "\n".join(f"<li>{inline(i)}</li>" for i in items) + "\n</ul>")
@@ -158,14 +174,16 @@ def to_html(md):
             flush()
             level = len(heading.group(1))
             if level == 1:
-                out.append('<header class="hero">\n<p class="eyebrow">Airlock</p>')
-                out.append(f"<h1>{inline(heading.group(2))}</h1>")
+                title = heading.group(2)
                 continue
             if level == 2:
-                out.append("</section>" if in_section else "</header>")
-                out.append("<section>")
-                in_section = True
-            out.append(f"<h{level}>{inline(heading.group(2))}</h{level}>")
+                if count:
+                    out.append("</div></div></section>")
+                count += 1
+                out.append(f'<section><div class="wrap"><h2 class="shiny-sec">{count:02d}</h2>'
+                           f'<h3>{inline(heading.group(2))}</h3><div class="prose">')
+            else:
+                out.append(f"<h4>{inline(heading.group(2))}</h4>")
         elif re.match(r"[-*]\s+", stripped):
             if para:
                 flush()
@@ -177,15 +195,24 @@ def to_html(md):
                 flush()
             para.append(stripped)
     flush()
-    out.append("</section>" if in_section else "</header>")
-    return "\n".join(out)
+    if count:
+        out.append("</div></div></section>")
+
+    # "Privacy Policy - Airlock Extension" -> "Privacy Policy"
+    short = re.sub(r"\s+-\s+.*$", "", title)
+    hero = (f'<header class="hero"><div class="wrap"><p class="hi">Airlock extension</p>'
+            f'<div class="row"><h1>{inline(short)}</h1>'
+            f'<p class="lead">{"<br>".join(lead)}</p></div></div></header>')
+    return title, hero + "\n" + "\n".join(out)
 
 
 def page(title, lang, current, body):
-    links = []
-    for dest, _, label in PAGES.values():
-        cur = ' aria-current="page"' if dest == current else ""
-        links.append(f'<a href="{dest}"{cur}>{label}</a>')
+    items = [("index.html", "Home")] + [(dest, label) for dest, _, label in PAGES.values()]
+    links = "\n".join(
+        f'<li><a href="{href}"{" class=\"active\"" if href == current else ""}>'
+        f'<span class="dot"></span>{label}</a></li>'
+        for href, label in items
+    )
     return f"""<!doctype html>
 <html lang="{lang}">
 <head>
@@ -196,35 +223,39 @@ def page(title, lang, current, body):
 <style>{CSS}</style>
 </head>
 <body>
-<nav>
-<a href="index.html"{' aria-current="page"' if current == "index.html" else ""}>Airlock</a>
-{chr(10).join(links)}
-</nav>
-<main>
+<div class="nav-wrap"><nav><ul>
+{links}
+</ul></nav></div>
 {body}
-<footer><span>Airlock · MIT</span><a href="{REPO}">github.com/kiyomasanaki/airlock</a></footer>
-</main>
+<footer><div class="wrap"><span>Airlock · MIT licence</span>
+<a href="{REPO}">github.com/kiyomasanaki/airlock</a></div></footer>
+<script>{SCRIPT}</script>
 </body>
 </html>
 """
 
 
-INDEX = """<header class="hero">
-<p class="eyebrow">Chrome extension</p>
-<h1>Airlock</h1>
-<p>An airlock between impulse and action. <strong>100% local, zero telemetry.</strong></p>
-</header>
-<div class="cards">
-<a class="card" href="privacy-policy.html"><b>Privacy policy</b><span>What Airlock stores, and what never leaves your machine.</span></a>
-<a class="card" href="legal-notice.html"><b>Legal notice</b><span>Publisher, hosting, licence.</span></a>
-</div>"""
+INDEX = f"""<header class="hero"><div class="wrap">
+<p class="hi">Chrome extension</p>
+<div class="row"><h1>Airlock</h1>
+<p class="lead">A buffer zone between an impulse and the action it triggers. Built for ADHD brains,
+<span class="shiny-sec">100% local, zero telemetry</span>.</p></div>
+<div class="pill-row"><a class="icon-btn" href="{REPO}">GitHub</a></div>
+</div></header>
+<section><div class="wrap">
+<h2 class="shiny-sec">Transparency</h2>
+<h3>Legal</h3>
+<div class="grid">
+<a class="card" href="privacy-policy.html"><h4>Privacy policy</h4><span>What Airlock stores, and what never leaves your machine.</span></a>
+<a class="card" href="legal-notice.html"><h4>Legal notice</h4><span>Publisher, hosting, licence.</span></a>
+</div>
+</div></section>"""
 
 
 def main():
     for src, (dest, lang, _) in PAGES.items():
-        md = (DOCS / src).read_text(encoding="utf-8")
-        title = re.search(r"^#\s+(.*)", md, re.M).group(1)
-        (DOCS / dest).write_text(page(title, lang, dest, to_html(md)), encoding="utf-8")
+        title, body = to_html((DOCS / src).read_text(encoding="utf-8"))
+        (DOCS / dest).write_text(page(title, lang, dest, body), encoding="utf-8")
         print(f"docs/{dest}")
     (DOCS / "index.html").write_text(page("Airlock", "en", "index.html", INDEX), encoding="utf-8")
     # serve the files as they are, without Jekyll processing

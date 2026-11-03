@@ -12,6 +12,7 @@ let captureWaiting = false;
 const ownWrites = new Set(); // serialized states we wrote, to recognise their echo
 let undoSnapshot = null;
 let undoTimer = null;
+let shortcut = '';            // the one Chrome really bound, read at startup
 
 const $ = id => document.getElementById(id);
 
@@ -92,7 +93,9 @@ function render() {
     $('hint').textContent = '1 switch · 2 file · 3 laisser tomber';
   } else {
     $('decision').className = 'decision';
-    $('hint').textContent = 'Entrée pour valider · Ctrl+Shift+Q pour rouvrir';
+    $('hint').textContent = shortcut
+      ? `Entrée pour valider · ${shortcut} pour rouvrir`
+      : 'Entrée pour valider';
   }
 
   // Queue
@@ -280,3 +283,4 @@ $('btnReset').onclick = () => {
 };
 
 load();
+airlockShortcut(s => { shortcut = s; if (loaded) render(); });

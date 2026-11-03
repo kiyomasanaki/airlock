@@ -21,6 +21,7 @@ let state = airlockBlank();
 let selected = null;   // texte de l'impulsion selectionnee
 let busy = false;
 let lastError = null;  // { title, body, detail } affiche sous la barre d'action
+let shortcut = '';     // raccourci reellement assigne, '' si aucun
 
 const $ = id => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -96,7 +97,9 @@ function renderList() {
   });
 
   if (!any) {
-    host.appendChild(el('div', 'empty sunken', 'aucune impulsion — capture-en une avec Ctrl+Shift+Q'));
+    host.appendChild(el('div', 'empty sunken', shortcut
+      ? `aucune impulsion : capture-en une avec ${shortcut}`
+      : 'aucune impulsion : capture-en une depuis l\'icône Airlock'));
   }
 }
 
@@ -370,7 +373,8 @@ chrome.storage.onChanged.addListener((changes, area) => {
   if (typing) renderList(); else render();
 });
 
-load(() => {
+// le raccourci d'abord : la liste vide le cite des le premier rendu
+airlockShortcut(s => { shortcut = s; load(() => {
   const params = new URLSearchParams(location.search);
   const wanted = params.get('impulse');
   const all = allImpulses();
@@ -378,4 +382,4 @@ load(() => {
   render();
   const first = document.querySelector('.add-step input');
   if (first && !(state.methodologies[selected] || {}).steps) first.focus();
-});
+}); });

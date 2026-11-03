@@ -61,11 +61,25 @@ function loadState(cb) {
 // ─── shortcut ───────────────────────────────────────────────────────────
 
 function renderShortcut() {
-  chrome.commands.getAll(cmds => {
-    const c = cmds.find(x => x.name === '_execute_action');
-    $('currentShortcut').textContent = c && c.shortcut ? c.shortcut : 'aucun (à définir)';
+  airlockShortcut(shortcut => {
+    $('currentShortcut').textContent = shortcut || 'aucun (à définir)';
+    $('shortcutWarning').hidden = !!shortcut;
   });
+  // the service worker re-reads it too, to set or clear the "!" badge
+  chrome.runtime.sendMessage({ type: 'airlock_check_shortcut' }, () => void chrome.runtime.lastError);
 }
+
+$('suggestedShortcut').textContent = airlockSuggestedShortcut();
+
+chrome.storage.local.get([AIRLOCK_SHORTCUT_DISMISSED_KEY], r => {
+  $('chkShortcutDismiss').checked = !!r[AIRLOCK_SHORTCUT_DISMISSED_KEY];
+});
+$('chkShortcutDismiss').addEventListener('change', e => {
+  chrome.storage.local.set({ [AIRLOCK_SHORTCUT_DISMISSED_KEY]: e.target.checked });
+});
+
+// back from chrome://extensions/shortcuts: show the new state without a reload
+document.addEventListener('visibilitychange', () => { if (!document.hidden) renderShortcut(); });
 
 $('btnShortcut').onclick = () => {
   chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
