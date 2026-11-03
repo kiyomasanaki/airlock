@@ -91,9 +91,9 @@ Si nous modifions cette politique à l'avenir (par exemple si une future version
 ## Contact
 
 Pour toute question concernant la vie privée :
-- Développeur : keyamasabaya
-- Email : github@wespify.com
-- Site web : https://briake.xyz
+- Développeur : kiyomasanaki
+- Email : kiyo_masanaki_ghadmin@devops-evo.aleeas.com
+- Site web : https://kiyomasanaki.github.io/airlock/
 
 ## Conformité RGPD
 

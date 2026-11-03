@@ -9,8 +9,8 @@ The Airlock extension is published by a private individual, on a non-professiona
 In accordance with article 6-III-2 of French law no. 2004-575 of 21 June 2004 on confidence in the digital economy (LCEN), the publisher has chosen not to make their name and address public. Their identification details have been provided to the hosting provider listed below.
 
 - **Pseudonym**: kiyomasanaki
-- **Email**: github@wespify.com
-- **Website**: https://briake.xyz
+- **Email**: kiyo_masanaki_ghadmin@devops-evo.aleeas.com
+- **Website**: https://kiyomasanaki.github.io/airlock/
 
 ## Publication director
 
@@ -42,4 +42,4 @@ This legal notice is governed by French law. Any dispute will be submitted to th
 
 ## Contact
 
-For any question: github@wespify.com
+For any question: kiyo_masanaki_ghadmin@devops-evo.aleeas.com

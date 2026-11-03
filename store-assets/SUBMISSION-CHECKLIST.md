@@ -16,7 +16,7 @@ served by GitHub Pages; it just needs turning on:
 2. **Source**: Deploy from a branch
 3. **Branch**: `main`, folder **`/docs`**, then Save
 4. Wait for the first deploy, then check:
-   `https://keyamasabaya.github.io/Airlock/privacy-policy.html`
+   `https://kiyomasanaki.github.io/airlock/privacy-policy.html`
 
 That URL is what goes in the Store form.
 

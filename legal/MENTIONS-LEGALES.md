@@ -6,16 +6,16 @@
 
 L'extension Airlock est éditée par :
 
-- **Nom / Raison sociale** : keyamasabaya
+- **Nom / Raison sociale** : kiyomasanaki
 - **Statut** : [À COMPLÉTER : auto-entrepreneur / particulier / SARL / SASU]
 - **Adresse** : [À COMPLÉTER : adresse postale complète]
 - **Numéro SIREN/SIRET** : [À COMPLÉTER si applicable]
-- **Email** : github@wespify.com
-- **Site web** : https://briake.xyz
+- **Email** : kiyo_masanaki_ghadmin@devops-evo.aleeas.com
+- **Site web** : https://kiyomasanaki.github.io/airlock/
 
 ## Directeur de la publication
 
-keyamasabaya
+kiyomasanaki
 
 ## Hébergement
 
@@ -23,7 +23,7 @@ L'extension est distribuée via le Chrome Web Store, opéré par :
 - Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, États-Unis
 
 Les pages web associées (politique de confidentialité, support) sont hébergées par :
-- [À COMPLÉTER : nom de ton hébergeur VPS, si briake.xyz est self-hosted indiquer "Auto-hébergement (briake.xyz)"]
+- [À COMPLÉTER : nom de ton hébergeur VPS, ex. GitHub Pages]
 
 ## Propriété intellectuelle
 
@@ -47,4 +47,4 @@ Les présentes mentions légales sont régies par le droit français. Tout litig
 
 ## Contact
 
-Pour toute question : github@wespify.com
+Pour toute question : kiyo_masanaki_ghadmin@devops-evo.aleeas.com
