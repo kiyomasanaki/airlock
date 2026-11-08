@@ -36,10 +36,14 @@ function airlockNormalize(raw) {
     .map(d => ({ text: d.text, at: typeof d.at === 'number' ? d.at : null }))
     .slice(-AIRLOCK_DONE_MAX);
 
+  // Steps of an impulse that no longer exists anywhere (deleted from the queue,
+  // dropped, aged out of the history) are unreachable from every page: drop them.
+  const known = new Set([s.focus, s.pending, ...s.queue, ...s.done.map(d => d.text)]);
   const m = s.methodologies;
   s.methodologies = {};
   if (m && typeof m === 'object' && !Array.isArray(m)) {
     Object.keys(m).forEach(k => {
+      if (!known.has(k)) return;
       const v = m[k];
       if (!v || !Array.isArray(v.steps)) return;
       const steps = v.steps

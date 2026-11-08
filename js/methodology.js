@@ -49,6 +49,13 @@ function methodologyOf(s, text) {
   return s.methodologies[text];
 }
 
+// L'index affiche peut etre perime (deux clics avant le rendu, autre onglet) :
+// l'etape est retrouvee par son texte, l'index ne departage que des doublons.
+function stepIndex(steps, i, text) {
+  if (steps[i] && steps[i].text === text) return i;
+  return steps.findIndex(st => st.text === text);
+}
+
 function allImpulses() {
   return [state.focus, ...state.queue, ...state.done.map(d => d.text)].filter(Boolean);
 }
@@ -202,7 +209,7 @@ function renderDetail() {
     if (!lastError) {
       host.appendChild(stateBlock(
         'Par quoi commencer ?',
-        'Écris la toute première action concrète, si petite qu’elle paraît ridicule. Démarrer est le plus dur — le reste suit.'
+        'Écris la toute première action concrète, si petite qu’elle paraît ridicule. Démarrer est le plus dur, le reste suit.'
       ));
     }
     host.appendChild(addStepForm(true));
@@ -237,7 +244,8 @@ function renderDetail() {
     const target = selected;
     c.addEventListener('click', () => mutate(s => {
       const mm = s.methodologies[target];
-      if (mm && mm.steps[i]) mm.steps[i].done = !mm.steps[i].done;
+      const k = mm ? stepIndex(mm.steps, i, step.text) : -1;
+      if (k !== -1) mm.steps[k].done = !mm.steps[k].done;
     }));
 
     const del = el('button', 'step-del', '×');
@@ -246,8 +254,9 @@ function renderDetail() {
     del.setAttribute('aria-label', `Supprimer l’étape ${i + 1}`);
     del.addEventListener('click', () => mutate(s => {
       const mm = s.methodologies[target];
-      if (!mm) return;
-      mm.steps.splice(i, 1);
+      const k = mm ? stepIndex(mm.steps, i, step.text) : -1;
+      if (k === -1) return;
+      mm.steps.splice(k, 1);
       if (!mm.steps.length) delete s.methodologies[target];
     }));
 
@@ -367,6 +376,15 @@ function generate() {
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== 'local' || !changes[AIRLOCK_KEY]) return;
   state = airlockNormalize(changes[AIRLOCK_KEY].newValue);
+  // l'impulsion affichee a disparu (supprimee, laissee tomber, tout vide) :
+  // des etapes ajoutees ici n'auraient plus de proprietaire
+  const all = allImpulses();
+  if (selected && !all.includes(selected)) {
+    selected = state.focus || all[0] || null;
+    lastError = null;
+    render();
+    return;
+  }
   // ne pas reconstruire sous les doigts de quelqu'un qui tape une etape
   const typing = document.activeElement && document.activeElement.matches('.add-step input')
     && document.activeElement.value !== '';

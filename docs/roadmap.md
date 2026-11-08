@@ -1,4 +1,4 @@
-# Roadmap — Airlock
+# Roadmap: Airlock
 
 This roadmap has **no dates and no version numbers**. Each phase has an entry condition
 and an exit condition. You move to the next one when the previous one is validated by
@@ -6,7 +6,7 @@ real usage, not by the calendar.
 
 ---
 
-## Phase 0 — Foundations
+## Phase 0: Foundations
 
 **Status: done**
 
@@ -21,7 +21,7 @@ real usage, not by the calendar.
 
 ---
 
-## Phase 1 — Personal use and concept validation
+## Phase 1: Personal use and concept validation
 
 **Status: validated**
 
@@ -39,7 +39,7 @@ daily workflow.
 **Validation criteria to move on:**
 - Sustained use (near-daily capture) over a period long enough that it isn't just a
   novelty effect
-- At least one concrete case where it prevented a context switch — an impulse captured
+- At least one concrete case where it prevented a context switch: an impulse captured
   instead of dived into
 - Not uninstalled out of weariness
 
@@ -52,7 +52,7 @@ daily workflow.
 
 ---
 
-## Phase 2 — Technical polish before publication
+## Phase 2: Technical polish before publication
 
 **Entry condition:** Phase 1 validated by usage.
 
@@ -70,7 +70,7 @@ daily workflow.
 - **Screenshots** (3 max, telling: problem → capture → prioritisation) *(done)*
 - **Chrome Store description**, short and long *(done)*
 - **Cross-OS testing**, at minimum on Windows and one other OS
-- **UI localisation** via `chrome.i18n` — the interface is French-only while all
+- **UI localisation** via `chrome.i18n`: the interface is French-only while all
   documentation and the Store listing are in English
 
 **Exit condition:** all of the above is ready and the extension has been used
@@ -78,7 +78,7 @@ throughout Phase 1 with no blocking bug encountered.
 
 ---
 
-## Phase 3 — Initial publication
+## Phase 3: Initial publication
 
 **Entry condition:** Phase 2 complete.
 
@@ -86,7 +86,7 @@ throughout Phase 1 with no blocking bug encountered.
 
 - Create a Chrome Web Store developer account (one-off 5 USD)
 - Submit the extension (Google review takes a few days)
-- Publish as **Unlisted** first — direct URL, not visible in search
+- Publish as **Unlisted** first: direct URL, not visible in search
 - Share the URL with a small circle: friends, colleagues, tech community
 - Collect the first feedback over a meaningful period
 
@@ -95,15 +95,15 @@ qualitative feedback.
 
 ---
 
-## Phase 3.5 — Assisted methodology
+## Phase 3.5: Assisted methodology
 
 **Status: built, unpublished**
 
 Inserted out of sequence, at the author's request, while Phase 3 is still blocked on
 its own non-code items. It does not replace Phase 3.
 
-**What it does:** turns a captured impulse into a numbered methodology — 4 to 8
-concrete steps, the first one doable in under 10 minutes — shown in a dedicated tab
+**What it does:** turns a captured impulse into a numbered methodology (4 to 8
+concrete steps, the first one doable in under 10 minutes), shown in a dedicated tab
 with the impulse list on the left (25%) and the methodology on the right (75%).
 Step completion is tracked locally.
 
@@ -113,12 +113,12 @@ native messaging is the only browser-supported bridge.
 
 **Deliberate constraints:**
 - Off by default. Without the native host installed, the feature is inert and no
-  network call is ever made — the strictly-local promise holds for anyone who
+  network call is ever made: the strictly-local promise holds for anyone who
   doesn't install it.
 - Only the single impulse being acted on is sent. Never the queue, never the history.
 - No account, no API key, no server on Airlock's side.
 
-**Known tension with Phase 3 — resolved in Phase 3.7:** `nativeMessaging` is now an
+**Known tension with Phase 3, resolved in Phase 3.7:** `nativeMessaging` is now an
 optional permission, requested only on the first "Générer avec Claude" click, and steps
 can be written by hand without any host. The Store build ships the view as is; the
 Claude bridge stays an opt-in extra for users who install the host.
@@ -129,7 +129,7 @@ documents.
 
 ---
 
-## Phase 3.6 — Banner redesign
+## Phase 3.6: Banner redesign
 
 **Status: built, unpublished**
 
@@ -154,7 +154,7 @@ focus set, nothing is shown.
 
 ---
 
-## Phase 3.7 — Audit and reliability pass
+## Phase 3.7: Audit and reliability pass
 
 **Status: built, unpublished**
 
@@ -164,7 +164,7 @@ the code delivered.
 
 **Bugs fixed:**
 - A capture typed while a focus was running was **lost** if the popup closed before the
-  switch/queue/drop answer — the most common way the popup closes. `pending` is now
+  switch/queue/drop answer, the most common way the popup closes. `pending` is now
   saved immediately and the question is restored on reopen.
 - The popup theme never applied on open: the inline `<script>` was blocked by Manifest
   V3's content security policy. Moved to `js/theme.js`.
@@ -178,20 +178,20 @@ the code delivered.
   write, and watched every DOM mutation of the page to detect navigation.
 
 **ADHD-driven improvements**, each answering a difficulty the README already names:
-- *Out of sight, out of mind* — the reminder card can be turned on for every site
+- *Out of sight, out of mind*: the reminder card can be turned on for every site
   (opt-in, optional host permission), and the toolbar tooltip shows the focus from
   any tab.
-- *Task initiation* — steps can be written by hand; the next step shows under the focus
+- *Task initiation*: steps can be written by hand; the next step shows under the focus
   in the popup, the tooltip and the card.
-- *Friction* — keys `1` `2` `3` answer the decision.
-- *Misclicks without guilt* — undo toast instead of confirmation dialogs.
-- *An unanswered capture is never forgotten* — `?` badge on the icon.
+- *Friction*: keys `1` `2` `3` answer the decision.
+- *Misclicks without guilt*: undo toast instead of confirmation dialogs.
+- *An unanswered capture is never forgotten*: `?` badge on the icon.
 
 No telemetry, no streak, no score, no time tracking were added; `drop` stays free.
 
 ---
 
-## Phase 4 — First improvement wave (data-driven)
+## Phase 4: First improvement wave (data-driven)
 
 **Entry condition:** Phase 3 complete and user feedback collected.
 
@@ -209,7 +209,7 @@ problem actually experienced during Phase 1.
 - **Editing an existing item** (currently you must delete and recapture)
 - **Drag-and-drop reordering** of the queue
 - **Search** across captured items
-- ~~**Themes** (light/dark auto, based on `prefers-color-scheme`)~~ — done in the popup
+- ~~**Themes** (light/dark auto, based on `prefers-color-scheme`)~~: done in the popup
 - **Optional notifications**: a reminder when a focus has been idle for a long time
 
 **Exit condition:** one or two features added, validated by usage, without inflating
@@ -217,7 +217,7 @@ the UI to the point of losing the simplicity of the airlock.
 
 ---
 
-## Phase 5 — Going public
+## Phase 5: Going public
 
 **Entry condition:** Phase 4 confirmed that the new features hold up and did not
 degrade the experience.
@@ -234,7 +234,7 @@ degrade the experience.
 
 ---
 
-## Phase 6 — Structural evolutions (if the extension found its audience)
+## Phase 6: Structural evolutions (if the extension found its audience)
 
 **Entry condition:** a significant, engaged user base plus recurring feedback
 justifying heavier work.

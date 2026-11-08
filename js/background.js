@@ -58,7 +58,17 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
 // ─── optional reminder on every site ────────────────────────────────────
 
-async function syncEverywhere() {
+// Install, startup, permission events and the Options page can all ask at once:
+// two overlapping runs would both see "not registered" and the second
+// registration would fail on the duplicate id. Runs are chained, never parallel.
+let syncChain = Promise.resolve();
+
+function syncEverywhere() {
+  syncChain = syncChain.then(doSyncEverywhere);
+  return syncChain;
+}
+
+async function doSyncEverywhere() {
   try {
     const granted = await chrome.permissions.contains({ origins: EVERYWHERE_ORIGINS });
     const existing = await chrome.scripting.getRegisteredContentScripts({ ids: [EVERYWHERE_ID] });
