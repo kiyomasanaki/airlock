@@ -22,6 +22,7 @@ let selected = null;   // texte de l'impulsion selectionnee
 let busy = false;
 let lastError = null;  // { title, body, detail } affiche sous la barre d'action
 let shortcut = '';     // raccourci reellement assigne, '' si aucun
+let ready = false;     // premier rendu fait (etat et selection connus)
 
 const $ = id => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -88,9 +89,9 @@ function renderList() {
   // un meme texte peut apparaitre plusieurs fois dans l'historique
   const doneTexts = [...new Set(state.done.map(d => d.text).reverse())];
   const groups = [
-    ['Focus actuel', state.focus ? [state.focus] : [], 'focus'],
-    ['File de priorités', state.queue, 'queue'],
-    ['Fait', doneTexts, 'done'],
+    [airlockT('mGroupFocus'), state.focus ? [state.focus] : [], 'focus'],
+    [airlockT('mGroupQueue'), state.queue, 'queue'],
+    [airlockT('mGroupDone'), doneTexts, 'done'],
   ];
 
   let any = false;
@@ -105,8 +106,8 @@ function renderList() {
 
   if (!any) {
     host.appendChild(el('div', 'empty sunken', shortcut
-      ? `aucune impulsion : capture-en une avec ${shortcut}`
-      : 'aucune impulsion : capture-en une depuis l\'icône Airlock'));
+      ? airlockT('mEmptyShortcut', { shortcut })
+      : airlockT('mEmpty')));
   }
 }
 
@@ -125,10 +126,10 @@ function addStepForm(isFirst) {
   input.type = 'text';
   input.maxLength = 300;
   input.placeholder = isFirst
-    ? 'la toute première action, faisable en moins de 10 minutes…'
-    : 'étape suivante…';
-  input.setAttribute('aria-label', 'ajouter une étape');
-  const btn = el('button', 'btn', 'Ajouter');
+    ? airlockT('mFirstPlaceholder')
+    : airlockT('mNextPlaceholder');
+  input.setAttribute('aria-label', airlockT('mAddAria'));
+  const btn = el('button', 'btn', airlockT('mAdd'));
   btn.type = 'submit';
   form.append(input, btn);
 
@@ -153,10 +154,7 @@ function renderDetail() {
   host.innerHTML = '';
 
   if (!selected) {
-    host.appendChild(stateBlock(
-      'Choisis une impulsion',
-      'Sélectionne une impulsion à gauche pour la découper en petites étapes concrètes.'
-    ));
+    host.appendChild(stateBlock(airlockT('mPickTitle'), airlockT('mPickBody')));
     return;
   }
 
@@ -166,25 +164,25 @@ function renderDetail() {
   const m = state.methodologies[selected];
   if (m && m.generatedAt) {
     head.appendChild(el('div', 'meta',
-      `Étapes générées le ${new Date(m.generatedAt).toLocaleString('fr-FR')}`));
+      airlockT('mGeneratedAt', { date: new Date(m.generatedAt).toLocaleString(airlockLocale()) })));
   }
   host.appendChild(head);
 
   // barre d'action
   const bar = el('div', 'toolbar');
-  const gen = el('button', 'btn', busy ? 'Génération…' : (m ? 'Regénérer avec Claude' : 'Générer avec Claude'));
+  const gen = el('button', 'btn', airlockT(busy ? 'mGenerating' : m ? 'mRegenerate' : 'mGenerate'));
   gen.type = 'button';
   gen.disabled = busy;
-  gen.title = 'Optionnel : nécessite Claude Code et l’hôte natif Airlock installés sur cette machine';
+  gen.title = airlockT('mGenerateTitle');
   gen.addEventListener('click', generate);
   bar.appendChild(gen);
 
   if (m) {
-    const clear = el('button', 'btn', 'Tout effacer');
+    const clear = el('button', 'btn', airlockT('mClear'));
     clear.type = 'button';
     clear.disabled = busy;
     clear.addEventListener('click', () => {
-      if (!confirm('Effacer toutes les étapes de cette impulsion ?')) return;
+      if (!confirm(airlockT('mClearConfirm'))) return;
       const target = selected;
       mutate(s => { delete s.methodologies[target]; });
     });
@@ -199,7 +197,7 @@ function renderDetail() {
   }
 
   if (busy) {
-    const s = stateBlock('Génération en cours…', 'Claude construit la marche à suivre. Ça prend quelques secondes.');
+    const s = stateBlock(airlockT('mBusyTitle'), airlockT('mBusyBody'));
     s.prepend(el('div', 'spinner'));
     host.appendChild(s);
     return;
@@ -207,10 +205,7 @@ function renderDetail() {
 
   if (!m) {
     if (!lastError) {
-      host.appendChild(stateBlock(
-        'Par quoi commencer ?',
-        'Écris la toute première action concrète, si petite qu’elle paraît ridicule. Démarrer est le plus dur, le reste suit.'
-      ));
+      host.appendChild(stateBlock(airlockT('mStartTitle'), airlockT('mStartBody')));
     }
     host.appendChild(addStepForm(true));
     return;
@@ -224,7 +219,7 @@ function renderDetail() {
   const fill = el('i');
   fill.style.width = total ? `${Math.round((done / total) * 100)}%` : '0';
   bar2.appendChild(fill);
-  pw.append(bar2, el('div', 'progress-label', `${done} étape${done > 1 ? 's' : ''} sur ${total}`));
+  pw.append(bar2, el('div', 'progress-label', airlockT('mProgress', done, total)));
   host.appendChild(pw);
 
   // etapes
@@ -238,9 +233,7 @@ function renderDetail() {
     const c = el('button', 'step-check', step.done ? '✓' : '○');
     c.type = 'button';
     c.setAttribute('aria-pressed', String(step.done));
-    c.setAttribute('aria-label', step.done
-      ? `Marquer l’étape ${i + 1} comme non faite`
-      : `Marquer l’étape ${i + 1} comme faite`);
+    c.setAttribute('aria-label', airlockT(step.done ? 'mUntick' : 'mTick', { n: i + 1 }));
     const target = selected;
     c.addEventListener('click', () => mutate(s => {
       const mm = s.methodologies[target];
@@ -250,8 +243,8 @@ function renderDetail() {
 
     const del = el('button', 'step-del', '×');
     del.type = 'button';
-    del.title = 'Supprimer cette étape';
-    del.setAttribute('aria-label', `Supprimer l’étape ${i + 1}`);
+    del.title = airlockT('mDelTitle');
+    del.setAttribute('aria-label', airlockT('mDelAria', { n: i + 1 }));
     del.addEventListener('click', () => mutate(s => {
       const mm = s.methodologies[target];
       const k = mm ? stepIndex(mm.steps, i, step.text) : -1;
@@ -275,22 +268,9 @@ function render() {
 
 // ─── generation optionnelle via l'hote natif ───────────────────────────
 
+// in the interface language, so the steps come back in it too
 function buildPrompt(impulse) {
-  return [
-    'Tu aides quelqu\'un qui a un TDAH ou un fort pattern de context-switching : il capture une intention de travail et a besoin de savoir par où commencer, tout de suite.',
-    '',
-    `Intention : « ${impulse} »`,
-    '',
-    'Produis une méthodologie de 4 à 8 étapes numérotées pour la mener à terme.',
-    'Contraintes :',
-    '- chaque étape est une action concrète, commençable immédiatement, pas un conseil vague',
-    '- la première étape doit pouvoir être faite en moins de 10 minutes',
-    '- une phrase par étape, pas de sous-listes',
-    '- réponds en français',
-    '',
-    'Réponds UNIQUEMENT par du JSON valide, sans texte autour, sans bloc de code, à ce format exact :',
-    '{"steps":["première étape","deuxième étape"]}',
-  ].join('\n');
+  return airlockT('mPrompt', impulse);
 }
 
 function parseSteps(raw) {
@@ -330,14 +310,13 @@ function generate() {
   const impulse = selected;
   const existing = state.methodologies[impulse];
   if (existing && existing.steps.length &&
-      !confirm('Remplacer les étapes actuelles par une nouvelle génération ?')) return;
+      !confirm(airlockT('mRegenConfirm'))) return;
 
   // Doit partir directement du clic : Chrome n'affiche la demande de
   // permission que pendant un geste utilisateur.
   chrome.permissions.request({ permissions: ['nativeMessaging'] }, granted => {
     if (chrome.runtime.lastError || !granted) {
-      fail('Permission refusée',
-        'La génération par Claude a besoin d’échanger avec un programme installé sur ta machine. Tu peux continuer à écrire tes étapes à la main.');
+      fail(airlockT('mErrPermTitle'), airlockT('mErrPermBody'));
       return;
     }
     busy = true;
@@ -346,20 +325,18 @@ function generate() {
 
     chrome.runtime.sendNativeMessage(HOST, { prompt: buildPrompt(impulse) }, response => {
       if (chrome.runtime.lastError) {
-        fail('Hôte natif introuvable',
-          'Chrome n’a pas pu joindre l’hôte qui exécute `claude -p`. Cette option demande Claude Code et l’hôte natif Airlock installés sur cette machine. Les étapes manuelles fonctionnent sans.',
-          chrome.runtime.lastError.message);
+        fail(airlockT('mErrHostTitle'), airlockT('mErrHostBody'), chrome.runtime.lastError.message);
         return;
       }
       if (!response || response.ok === false) {
-        fail('La génération a échoué', 'L’hôte natif a répondu avec une erreur.',
-          (response && response.error) || 'réponse vide');
+        fail(airlockT('mErrFailTitle'), airlockT('mErrFailBody'),
+          (response && response.error) || airlockT('mErrEmpty'));
         return;
       }
 
       const steps = parseSteps(response.output);
       if (!steps) {
-        fail('Réponse illisible', 'Le modèle n’a pas renvoyé le JSON attendu. Relance la génération.',
+        fail(airlockT('mErrParseTitle'), airlockT('mErrParseBody'),
           String(response.output || '').slice(0, 200));
         return;
       }
@@ -398,6 +375,10 @@ airlockShortcut(s => { shortcut = s; load(() => {
   const all = allImpulses();
   selected = (wanted && all.includes(wanted)) ? wanted : (state.focus || all[0] || null);
   render();
+  ready = true;
   const first = document.querySelector('.add-step input');
   if (first && !(state.methodologies[selected] || {}).steps) first.focus();
 }); });
+
+// changement de langue : tout le texte du volet droit est construit en JS
+airlockI18nInit(() => { if (ready) render(); });

@@ -17,14 +17,14 @@ function showStatus(id, msg, ok) {
 // ─── history ────────────────────────────────────────────────────────────
 
 function dayLabel(ts) {
-  if (!ts) return 'date inconnue';
+  if (!ts) return airlockT('dayUnknown');
   const d = new Date(ts);
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const day = new Date(d); day.setHours(0, 0, 0, 0);
   const diff = Math.round((today - day) / 86400000);
-  if (diff === 0) return 'aujourd\'hui';
-  if (diff === 1) return 'hier';
-  return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  if (diff === 0) return airlockT('dayToday');
+  if (diff === 1) return airlockT('dayYesterday');
+  return d.toLocaleDateString(airlockLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 // Grouped by day, most recent first: seeing what got finished is the point,
@@ -32,7 +32,8 @@ function dayLabel(ts) {
 function renderDone(done) {
   const el = $('doneList');
   if (!done || done.length === 0) {
-    el.innerHTML = '<div class="empty">rien de fait pour l\'instant</div>';
+    el.innerHTML = '<div class="empty"></div>';
+    el.firstChild.textContent = airlockT('optHistoryEmpty');
     return;
   }
   el.innerHTML = '';
@@ -52,7 +53,7 @@ function renderDone(done) {
     div.querySelector('.txt').textContent = d.text;
     if (d.at) {
       div.querySelector('.time').textContent =
-        new Date(d.at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        new Date(d.at).toLocaleTimeString(airlockLocale(), { hour: '2-digit', minute: '2-digit' });
     }
     el.appendChild(div);
   });
@@ -66,14 +67,14 @@ function loadState(cb) {
 
 function renderShortcut() {
   airlockShortcut(shortcut => {
-    $('currentShortcut').textContent = shortcut || 'aucun (à définir)';
+    $('suggestedShortcut').textContent = airlockSuggestedShortcut();
+    $('currentShortcut').textContent = shortcut || airlockT('optShortcutNone');
     $('shortcutWarning').hidden = !!shortcut;
   });
   // the service worker re-reads it too, to set or clear the "!" badge
   chrome.runtime.sendMessage({ type: 'airlock_check_shortcut' }, () => void chrome.runtime.lastError);
 }
 
-$('suggestedShortcut').textContent = airlockSuggestedShortcut();
 
 chrome.storage.local.get([AIRLOCK_SHORTCUT_DISMISSED_KEY], r => {
   $('chkShortcutDismiss').checked = !!r[AIRLOCK_SHORTCUT_DISMISSED_KEY];
@@ -93,9 +94,9 @@ $('btnShortcut').onclick = () => {
 
 function renderEverywhere() {
   chrome.permissions.contains({ origins: EVERYWHERE_ORIGINS }, on => {
-    $('everywhereState').textContent = on ? 'activé' : 'désactivé';
+    $('everywhereState').textContent = airlockT(on ? 'optOn' : 'optOff');
     $('everywhereState').className = 'pill ' + (on ? 'on' : 'off');
-    $('btnEverywhere').textContent = on ? 'Désactiver' : 'Activer sur tous les sites';
+    $('btnEverywhere').textContent = airlockT(on ? 'optEverywhereDisable' : 'optEverywhereEnable');
     $('btnEverywhere').dataset.on = on ? '1' : '';
   });
 }
@@ -111,20 +112,32 @@ function syncEverywhere(cb) {
 $('btnEverywhere').onclick = () => {
   if ($('btnEverywhere').dataset.on) {
     chrome.permissions.remove({ origins: EVERYWHERE_ORIGINS }, () => syncEverywhere(() =>
-      showStatus('everywhereStatus', 'Rappel limité à claude.ai.', true)));
+      showStatus('everywhereStatus', airlockT('optEverywhereOff'), true)));
     return;
   }
   // Must run straight from the click: Chrome only shows the prompt during a user gesture.
   chrome.permissions.request({ origins: EVERYWHERE_ORIGINS }, granted => {
     if (chrome.runtime.lastError || !granted) {
-      showStatus('everywhereStatus', 'Permission non accordée : rien n’a changé.', false);
+      showStatus('everywhereStatus', airlockT('optEverywhereDenied'), false);
       renderEverywhere();
       return;
     }
-    syncEverywhere(() => showStatus('everywhereStatus',
-      'Activé. Le rappel apparaît sur les pages que tu ouvres ou recharges à partir de maintenant.', true));
+    syncEverywhere(() => showStatus('everywhereStatus', airlockT('optEverywhereOnMsg'), true));
   });
 };
+
+// ─── language ───────────────────────────────────────────────────────────
+
+// Stored as chosen ('auto' included): the resolved language is recomputed by
+// every surface, so 'auto' keeps following the browser.
+function renderLang() {
+  chrome.storage.local.get([AIRLOCK_LANG_KEY], r => {
+    $('selLang').value = r[AIRLOCK_LANG_KEY] || 'auto';
+  });
+}
+$('selLang').addEventListener('change', e => {
+  chrome.storage.local.set({ [AIRLOCK_LANG_KEY]: e.target.value });
+});
 
 // ─── export / import ────────────────────────────────────────────────────
 
@@ -146,7 +159,7 @@ $('btnExport').onclick = () => {
     a.download = `airlock-export-${date}.json`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    showStatus('status', 'Export téléchargé.', true);
+    showStatus('status', airlockT('optExported'), true);
   });
 };
 
@@ -176,16 +189,16 @@ $('fileImport').addEventListener('change', e => {
     try {
       data = JSON.parse(reader.result);
     } catch {
-      showStatus('status', 'Fichier invalide : JSON illisible.', false);
+      showStatus('status', airlockT('optBadJson'), false);
       return;
     }
 
     if (!validImport(data)) {
-      showStatus('status', 'Fichier invalide : structure inattendue.', false);
+      showStatus('status', airlockT('optBadShape'), false);
       return;
     }
 
-    if (!confirm('Remplacer les données actuelles (focus, file, historique, étapes) par le contenu de ce fichier ?')) return;
+    if (!confirm(airlockT('optImportConfirm'))) return;
 
     loadState(current => {
       const state = airlockNormalize({
@@ -199,7 +212,7 @@ $('fileImport').addEventListener('change', e => {
       });
       chrome.storage.local.set({ [AIRLOCK_KEY]: state }, () => {
         renderDone(state.done);
-        showStatus('status', 'Import réussi.', true);
+        showStatus('status', airlockT('optImported'), true);
       });
     });
   };
@@ -208,9 +221,14 @@ $('fileImport').addEventListener('change', e => {
 
 // ─── startup ────────────────────────────────────────────────────────────
 
-loadState(state => renderDone(state.done));
-renderShortcut();
-renderEverywhere();
+// The shortcut and everywhere texts are rebuilt by data-i18n-html, which
+// recreates their <kbd> placeholders: refill everything after a language change.
+airlockI18nInit(() => {
+  renderLang();
+  loadState(state => renderDone(state.done));
+  renderShortcut();
+  renderEverywhere();
+});
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes[AIRLOCK_KEY]) {

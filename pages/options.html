@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Airlock - Options</title>
+<title data-i18n="optTitle">Airlock · Options</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -47,6 +47,14 @@ button.primary { background: #e8e8e8; color: #141414; border-color: #e8e8e8; fon
 button.primary:hover { background: #fff; }
 
 input[type="file"] { display: none; }
+
+select {
+  font-family: inherit; font-size: 13px;
+  border-radius: 7px; padding: 8px 10px;
+  border: 1px solid #2e2e2e; background: #1f1f1f; color: #e8e8e8;
+  cursor: pointer;
+}
+select:focus-visible { outline: 2px solid #2dd4bf; outline-offset: 2px; }
 
 .status { font-size: 12px; margin-top: 10px; min-height: 16px; }
 .shortcut-warning { font-size: 12px; line-height: 1.5; color: #e8e8e8; background: #2a1d0b; border: 1px solid #5c3d0e; border-left: 3px solid #f2b53c; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
@@ -105,24 +113,36 @@ footer {
 <body>
 
 <div class="wrap">
-  <h1>Airlock · Options</h1>
-  <div class="subtitle">Réglages et données. Le popup reste volontairement minimal : tout le reste est ici.</div>
+  <h1 data-i18n="optTitle">Airlock · Options</h1>
+  <div class="subtitle" data-i18n="optSubtitle">Réglages et données. Le popup reste volontairement minimal : tout le reste est ici.</div>
 
   <div class="card">
-    <div class="card-title">Raccourci clavier</div>
-    <div class="card-desc">Raccourci actuel : <kbd id="currentShortcut">…</kbd>. Pour le modifier, ça se passe dans les réglages d'extensions de Chrome. Dans le sas, <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> répondent switch / file / laisser tomber sans la souris.</div>
-    <div class="shortcut-warning" id="shortcutWarning" hidden>
-      <b>Aucun raccourci n'est assigné à Airlock.</b> Chrome n'a pas pu lui donner <kbd id="suggestedShortcut">…</kbd> : la combinaison est sans doute déjà prise par Chrome, une autre extension ou une application. Choisis une combinaison libre avec le bouton ci-dessous. L'extension fonctionne : en attendant, un clic sur son icône ouvre le sas.
-      <label class="dismiss"><input type="checkbox" id="chkShortcutDismiss"> Ne plus afficher l'alerte (badge « ! » sur l'icône)</label>
-    </div>
+    <div class="card-title" id="langTitle" data-i18n="optLangTitle">Langue</div>
+    <div class="card-desc" data-i18n="optLangDesc">Langue de l'interface : popup, carte de rappel, étapes et infobulle de l'icône. Le changement s'applique tout de suite, sans recharger.</div>
     <div class="row">
-      <button id="btnShortcut">Ouvrir chrome://extensions/shortcuts</button>
+      <select id="selLang" aria-labelledby="langTitle">
+        <option value="auto" data-i18n="optLangAuto">Automatique (langue du navigateur)</option>
+        <option value="fr" lang="fr">Français</option>
+        <option value="en" lang="en">English</option>
+      </select>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-title">Rappel du focus sur tous les sites <span class="pill off" id="everywhereState">…</span></div>
-    <div class="card-desc">Par défaut, la carte qui rappelle ton focus n'apparaît que sur claude.ai. Active-la partout pour la retrouver là où l'attention s'échappe vraiment : mails, réseaux, vidéos, recherche. Elle n'apparaît que si un focus est défini, se ferme d'un clic, et ne lit jamais le contenu des pages. Chrome te demandera l'accès aux sites : c'est ce qui permet d'afficher la carte, rien d'autre.</div>
+    <div class="card-title" data-i18n="optShortcutTitle">Raccourci clavier</div>
+    <div class="card-desc" data-i18n-html="optShortcutDesc">Raccourci actuel : <kbd id="currentShortcut">…</kbd>. Pour le modifier, ça se passe dans les réglages d'extensions de Chrome. Dans le sas, <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> répondent switch / file / laisser tomber sans la souris.</div>
+    <div class="shortcut-warning" id="shortcutWarning" hidden>
+      <span data-i18n-html="optShortcutWarning"><b>Aucun raccourci n'est assigné à Airlock.</b> Chrome n'a pas pu lui donner <kbd id="suggestedShortcut">…</kbd> : la combinaison est sans doute déjà prise par Chrome, une autre extension ou une application. Choisis une combinaison libre avec le bouton ci-dessous. L'extension fonctionne : en attendant, un clic sur son icône ouvre le sas.</span>
+      <label class="dismiss"><input type="checkbox" id="chkShortcutDismiss"> <span data-i18n="optShortcutDismiss">Ne plus afficher l'alerte (badge « ! » sur l'icône)</span></label>
+    </div>
+    <div class="row">
+      <button id="btnShortcut" data-i18n="optShortcutBtn">Ouvrir chrome://extensions/shortcuts</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span data-i18n="optEverywhereTitle">Rappel du focus sur tous les sites</span> <span class="pill off" id="everywhereState">…</span></div>
+    <div class="card-desc" data-i18n="optEverywhereDesc">Par défaut, la carte qui rappelle ton focus n'apparaît que sur claude.ai. Active-la partout pour la retrouver là où l'attention s'échappe vraiment : mails, réseaux, vidéos, recherche. Elle n'apparaît que si un focus est défini, se ferme d'un clic, et ne lit jamais le contenu des pages. Chrome te demandera l'accès aux sites : c'est ce qui permet d'afficher la carte, rien d'autre.</div>
     <div class="row">
       <button id="btnEverywhere" class="primary">Activer sur tous les sites</button>
     </div>
@@ -130,25 +150,26 @@ footer {
   </div>
 
   <div class="card">
-    <div class="card-title">Export / Import</div>
-    <div class="card-desc">Tes données restent 100% locales. L'export (focus, file, historique daté, étapes) sert de sauvegarde ou de transfert manuel vers une autre machine.</div>
+    <div class="card-title" data-i18n="optDataTitle">Export / Import</div>
+    <div class="card-desc" data-i18n="optDataDesc">Tes données restent 100% locales. L'export (focus, file, historique daté, étapes) sert de sauvegarde ou de transfert manuel vers une autre machine.</div>
     <div class="row">
-      <button id="btnExport">Exporter en JSON</button>
-      <button id="btnImportTrigger">Importer un JSON</button>
+      <button id="btnExport" data-i18n="optExport">Exporter en JSON</button>
+      <button id="btnImportTrigger" data-i18n="optImport">Importer un JSON</button>
       <input type="file" id="fileImport" accept="application/json,.json">
     </div>
     <div class="status" id="status"></div>
   </div>
 
   <div class="card">
-    <div class="section-title">Historique complet : fait</div>
-    <div id="doneList"><div class="empty">chargement...</div></div>
+    <div class="section-title" data-i18n="optHistoryTitle">Historique complet : fait</div>
+    <div id="doneList"><div class="empty" data-i18n="loading">chargement…</div></div>
   </div>
 
-  <footer>Airlock : stockage 100% local, aucun serveur, aucune télémétrie.</footer>
+  <footer data-i18n="optFooter">Airlock : stockage 100% local, aucun serveur, aucune télémétrie.</footer>
 </div>
 
 <script src="../js/state.js"></script>
+<script src="../js/i18n.js"></script>
 <script src="../js/options.js"></script>
 </body>
 </html>

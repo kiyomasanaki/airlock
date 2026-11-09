@@ -151,7 +151,7 @@ function createBanner(state) {
 
   // Une ecriture sans effet visible (position, historique...) ne doit pas
   // rejouer l'animation d'entree.
-  const sig = JSON.stringify([hasFocus && state.focus, next, state.queue.length, isNewChat, shortcut]);
+  const sig = JSON.stringify([hasFocus && state.focus, next, state.queue.length, isNewChat, shortcut, airlockLang]);
   if (sig === lastSig && bannerEl && bannerEl.isConnected) return;
   lastSig = sig;
 
@@ -162,17 +162,17 @@ function createBanner(state) {
   const card = el('div', 'airlock-banner');
   card.id = 'airlock-banner';
   card.setAttribute('role', 'complementary');
-  card.setAttribute('aria-label', 'Airlock : focus actuel');
+  card.setAttribute('aria-label', airlockT('cardAria'));
 
   // entete
   const head = el('div', 'airlock-head');
   head.innerHTML = GRIP;
-  head.appendChild(el('p', 'airlock-label', hasFocus ? 'focus actuel' : 'aucun focus défini'));
+  head.appendChild(el('p', 'airlock-label', airlockT(hasFocus ? 'currentFocus' : 'cardNoFocus')));
 
   const close = el('button', 'airlock-close', '×');
   close.type = 'button';
-  close.title = shortcut ? `Masquer (${shortcut} pour rouvrir Airlock)` : 'Masquer';
-  close.setAttribute('aria-label', 'Masquer le rappel Airlock');
+  close.title = shortcut ? airlockT('cardHideShortcut', { shortcut }) : airlockT('cardHide');
+  close.setAttribute('aria-label', airlockT('cardHideAria'));
   close.addEventListener('click', () => {
     dismissed = true;
     card.remove();
@@ -192,7 +192,7 @@ function createBanner(state) {
 
     if (next) {
       const ns = el('p', 'airlock-next');
-      ns.appendChild(el('span', 'airlock-next-label', 'prochaine étape'));
+      ns.appendChild(el('span', 'airlock-next-label', airlockT('nextStep')));
       ns.appendChild(el('span', 'airlock-next-text', next));
       body.appendChild(ns);
     }
@@ -200,22 +200,21 @@ function createBanner(state) {
     const meta = el('div', 'airlock-meta');
     const n = (state.queue || []).length;
     const chip = el('span', 'airlock-chip');
-    chip.appendChild(el('span', null, n > 0 ? `${n} en file` : 'file vide'));
+    chip.appendChild(el('span', null, n > 0 ? airlockT('queueCount', n) : airlockT('queueEmpty')));
     meta.appendChild(chip);
     body.appendChild(meta);
   } else {
     const f = el('p', 'airlock-focus');
     f.appendChild(el('span', 'airlock-dot idle'));
-    f.appendChild(el('span', 'airlock-focus-text', 'Rien en cours'));
+    f.appendChild(el('span', 'airlock-focus-text', airlockT('cardNothing')));
     body.appendChild(f);
 
-    body.appendChild(el('p', 'airlock-nudge',
-      'Capture ton intention dans le sas avant de plonger dans une nouvelle conversation.'));
+    body.appendChild(el('p', 'airlock-nudge', airlockT('cardNudge')));
 
     const meta = el('div', 'airlock-meta');
     meta.appendChild(shortcut
       ? el('kbd', null, shortcut)
-      : el('span', null, 'clique l\'icône Airlock'));
+      : el('span', null, airlockT('cardClickIcon')));
     body.appendChild(meta);
   }
 
@@ -282,23 +281,19 @@ function showShortcutWarning(bound) {
   box.setAttribute('role', 'alert');
 
   const head = el('div', 'airlock-warning-head');
-  head.appendChild(el('p', 'airlock-warning-title', bound
-    ? 'Ce n\'est plus le raccourci d\'Airlock'
-    : 'Le raccourci Airlock n\'est pas actif'));
+  head.appendChild(el('p', 'airlock-warning-title', airlockT(bound ? 'warnRebound' : 'warnUnbound')));
   const close = el('button', 'airlock-warning-close', '×');
   close.type = 'button';
-  close.setAttribute('aria-label', 'Fermer');
+  close.setAttribute('aria-label', airlockT('close'));
   close.addEventListener('click', () => { box.remove(); warningEl = null; });
   head.appendChild(close);
   box.appendChild(head);
 
-  box.appendChild(el('p', 'airlock-warning-text', bound
-    ? `${SUGGESTED} n'ouvre plus Airlock : le raccourci actuel est ${bound}.`
-    : `${SUGGESTED} n'est relié à aucune action. Une autre extension ou application l'utilise peut-être : choisis un raccourci libre dans les réglages de Chrome.`));
-  box.appendChild(el('p', 'airlock-warning-ok',
-    'L\'extension fonctionne, seul le raccourci est à régler.'));
+  box.appendChild(el('p', 'airlock-warning-text',
+    airlockT(bound ? 'warnReboundText' : 'warnUnboundText', { suggested: SUGGESTED, bound })));
+  box.appendChild(el('p', 'airlock-warning-ok', airlockT('warnOk')));
 
-  const open = el('button', 'airlock-warning-btn', 'Vérifier les raccourcis');
+  const open = el('button', 'airlock-warning-btn', airlockT('warnBtn'));
   open.type = 'button';
   open.addEventListener('click', () => {
     if (alive()) chrome.runtime.sendMessage({ type: 'airlock_open_shortcuts' }, () => void chrome.runtime.lastError);
@@ -347,5 +342,13 @@ setInterval(() => {
 // la fenetre retrecit : la carte doit rester visible
 window.addEventListener('resize', () => { if (bannerEl) applyPos(bannerEl); });
 
-refresh();
-if (alive()) airlockShortcut(s => { shortcut = s; refresh(); });
+// premier rendu une fois la langue connue (evite une carte refaite aussitot),
+// puis a chaque changement de langue : airlockLang fait partie de lastSig
+let i18nReady = false;
+if (alive()) {
+  airlockI18nInit(() => {
+    if (i18nReady) { refresh(); return; }
+    i18nReady = true;
+    airlockShortcut(s => { shortcut = s; refresh(); });
+  });
+}

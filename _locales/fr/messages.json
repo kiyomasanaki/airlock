@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - Capturer et prioriser"
+  },
+  "description": {
+    "message": "Un sas entre l'impulsion et l'action. Capture l'idée au lieu de plonger dedans. Raccourci global Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "Ouvrir le sas de capture"
+  }
+}

@@ -2,10 +2,6 @@
 
 Copy to paste into the Store dashboard.
 
-> **Open point:** the extension interface is still French only. Either localise the UI
-> via `chrome.i18n` before publishing, or keep the note at the bottom of the English
-> detailed description so English-speaking users are not misled.
-
 Screenshots for the listing are in [`screenshots/`](screenshots/) (1280×800 PNG).
 
 ---
@@ -115,7 +111,7 @@ Ctrl+Shift+E by default (Cmd+Shift+E on Mac), changeable at chrome://extensions/
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
-Note: the extension interface is currently in French.
+Interface in English and French, switchable at any time from the Options page, no reload.
 
 Open source, MIT licence.
 ```
@@ -127,7 +123,7 @@ Open source, MIT licence.
 | Store field | Value |
 |---|---|
 | **Category** | Productivity |
-| **Language** | English |
+| **Language** | English (default), French. The name and short description are localised through `_locales/` |
 | **Single purpose** | Capture and prioritise user-entered focus items locally, in order to reduce context switching. |
 | **`storage` permission justification** | Persist the current focus, the priority queue and the history of completed items locally. No data is transmitted. |
 | **`claude.ai` host access justification** | Display a banner reminding the user of their current focus when a new conversation is opened. No page content is read or transmitted. |

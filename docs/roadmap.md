@@ -70,8 +70,9 @@ daily workflow.
 - **Screenshots** (3 max, telling: problem → capture → prioritisation) *(done)*
 - **Chrome Store description**, short and long *(done)*
 - **Cross-OS testing**, at minimum on Windows and one other OS
-- **UI localisation** via `chrome.i18n`: the interface is French-only while all
-  documentation and the Store listing are in English
+- **UI localisation** *(done in 1.3.0)*: English and French, switchable live from the
+  Options page through a small dictionary (`js/i18n.js`), since `chrome.i18n` cannot
+  change language at runtime; `chrome.i18n` only localises the manifest
 
 **Exit condition:** all of the above is ready and the extension has been used
 throughout Phase 1 with no blocking bug encountered.

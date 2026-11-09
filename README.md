@@ -208,7 +208,7 @@ The packaging script and the optional native-messaging bridge are kept outside t
 ## 🗺️ Status & links
 
 - 🚧 **Phase 2** (polish before publication) in progress; phases 0 and 1 are done
-- 🇫🇷 The interface is **French only** for now; localisation is on the roadmap
+- 🌐 Interface in **English and French**, switchable live from the Options page (defaults to the browser language)
 - 🗺️ [Roadmap](docs/roadmap.md) · 📤 [Publishing guide](docs/publishing.md) · 🔒 [Privacy & legal](https://kiyomasanaki.github.io/airlock/)
 
 <p align="center"><sub>MIT licence · see <a href="LICENSE">LICENSE</a></sub></p>
