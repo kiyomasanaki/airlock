@@ -80,13 +80,14 @@ function render() {
   } else {
     dot.className = 'dot idle';
     ft.className = 'focus-text empty';
-    ft.textContent = 'aucun, tape ci-dessous';
+    ft.textContent = airlockT('focusEmpty');
   }
   $('btnDone').disabled = !state.focus;
 
   const next = airlockNextStep(state, state.focus);
   if (next) {
-    ns.innerHTML = '<b>prochaine étape :</b> <span></span>';
+    ns.innerHTML = '<b></b> <span></span>';
+    ns.querySelector('b').textContent = airlockT('nextStepLabel');
     ns.querySelector('span').textContent = next;
     ns.hidden = false;
   } else {
@@ -96,24 +97,25 @@ function render() {
   // Decision (restored if the popup was closed before answering)
   if (state.pending) {
     // the focus can be gone meanwhile (marked done, changed from another page)
-    $('decisionQ').innerHTML = state.focus
-      ? `<b></b><br><span class="sub">ça passe devant "<span class="cur"></span>" ?</span>`
-      : `<b></b><br><span class="sub">aucun focus en cours : 1 pour en faire ton focus</span>`;
+    $('decisionQ').innerHTML = '<b></b><br><span class="sub"></span>';
     $('decisionQ').querySelector('b').textContent = `"${state.pending}"`;
-    if (state.focus) $('decisionQ').querySelector('.cur').textContent = state.focus;
+    $('decisionQ').querySelector('.sub').textContent = state.focus
+      ? airlockT('decisionAhead', { focus: state.focus })
+      : airlockT('decisionNoFocus');
     $('decision').className = 'decision visible';
-    $('hint').textContent = '1 switch · 2 file · 3 laisser tomber';
+    $('hint').textContent = airlockT('hintDecision');
   } else {
     $('decision').className = 'decision';
     $('hint').textContent = shortcut
-      ? `Entrée pour valider · ${shortcut} pour rouvrir`
-      : 'Entrée pour valider';
+      ? airlockT('hintEnterShortcut', { shortcut })
+      : airlockT('hintEnter');
   }
 
   // Queue
   const q = $('queue');
   if (state.queue.length === 0) {
-    q.innerHTML = '<div class="empty">vide, bonne concentration</div>';
+    q.innerHTML = '<div class="empty"></div>';
+    q.firstChild.textContent = airlockT('queueEmptyPopup');
   } else {
     q.innerHTML = '';
     state.queue.forEach((item, i) => {
@@ -123,9 +125,9 @@ function render() {
         <span class="qnum">${i+1}</span>
         <span class="qtext"></span>
         <div class="qbtns">
-          <button class="btn-x go" data-act="focus" data-i="${i}" title="passer en focus" aria-label="passer en focus">→</button>
-          ${i > 0 ? `<button class="btn-x" data-act="up" data-i="${i}" title="monter" aria-label="monter">↑</button>` : ''}
-          <button class="btn-x danger" data-act="del" data-i="${i}" title="supprimer" aria-label="supprimer">×</button>
+          <button class="btn-x go" data-act="focus" data-i="${i}" title="${airlockT('toFocus')}" aria-label="${airlockT('toFocus')}">→</button>
+          ${i > 0 ? `<button class="btn-x" data-act="up" data-i="${i}" title="${airlockT('moveUp')}" aria-label="${airlockT('moveUp')}">↑</button>` : ''}
+          <button class="btn-x danger" data-act="del" data-i="${i}" title="${airlockT('remove')}" aria-label="${airlockT('remove')}">×</button>
         </div>`;
       div.querySelector('.qtext').textContent = item;
       q.appendChild(div);
@@ -150,7 +152,7 @@ function render() {
     });
   }
 
-  $('count').textContent = `${state.queue.length} en file`;
+  $('count').textContent = airlockT('queueCount', state.queue.length);
 }
 
 // ─── undo ───────────────────────────────────────────────────────────────
@@ -215,7 +217,7 @@ function decide(kind) {
   } else if (kind === 'drop') {
     // drop is a legitimate answer: no counter, no trace, only a safety net for misclicks
     state.pending = val;
-    withUndo('laissé tomber, c\'est très bien', () => { state.pending = null; });
+    withUndo(airlockT('toastDropped'), () => { state.pending = null; });
     $('input').focus();
     return;
   }
@@ -226,7 +228,7 @@ function decide(kind) {
 function markDone() {
   if (!state.focus) return;
   const finished = state.focus;
-  withUndo(`terminé : ${finished}`, () => {
+  withUndo(airlockT('toastDone', { text: finished }), () => {
     state.done.push({ text: finished, at: Date.now() });
     if (state.done.length > AIRLOCK_DONE_MAX) state.done = state.done.slice(-AIRLOCK_DONE_MAX);
     state.focus = state.queue.shift() || null;
@@ -267,7 +269,7 @@ $('queue').addEventListener('click', e => {
   if (!(i >= 0 && i < state.queue.length)) return;
   if (act === 'del') {
     const item = state.queue[i];
-    withUndo(`supprimé : ${item}`, () => { state.queue.splice(i, 1); });
+    withUndo(airlockT('toastRemoved', { text: item }), () => { state.queue.splice(i, 1); });
     return;
   }
   if (act === 'up' && i > 0) {
@@ -289,10 +291,12 @@ $('btnMethod').onclick = () => {
 };
 
 $('btnReset').onclick = () => {
-  if (confirm('Vider focus, file, historique et étapes ?')) {
-    withUndo('tout a été vidé', () => { state = airlockBlank(); });
+  if (confirm(airlockT('resetConfirm'))) {
+    withUndo(airlockT('toastReset'), () => { state = airlockBlank(); });
   }
 };
 
 load();
 airlockShortcut(s => { shortcut = s; if (loaded) render(); });
+// static labels are translated by i18n.js; the dynamic ones need a re-render
+airlockI18nInit(() => { if (loaded) render(); });

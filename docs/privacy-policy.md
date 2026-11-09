@@ -15,7 +15,7 @@ We do NOT collect any data. The extension stores the following information local
 - Text you type as "impulses", "focus", or queue items
 - Timestamps of when items are created and completed
 - Generated methodologies and which of their steps you have ticked off
-- Your preferences (keyboard shortcut, display options)
+- Your preferences (keyboard shortcut, display options, interface language)
 
 This data is stored using the Chrome `storage.local` API and remains on your computer. It is never transmitted to us or to any server we control: we have none.
 

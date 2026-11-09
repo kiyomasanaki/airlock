@@ -248,7 +248,7 @@ body {
 <body>
 
 <div class="topbar">
-  <button class="theme-toggle" id="btnTheme" title="theme clair / sombre" aria-label="basculer le theme">
+  <button class="theme-toggle" id="btnTheme" title="thème clair / sombre" aria-label="basculer le thème" data-i18n-title="themeToggleTitle" data-i18n-aria-label="themeToggleAria">
     <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
     <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
   </button>
@@ -257,16 +257,16 @@ body {
 <div class="focus-bar">
   <div class="dot idle" id="dot"></div>
   <div style="flex:1; min-width:0">
-    <div class="focus-label">focus actuel</div>
+    <div class="focus-label" data-i18n="currentFocus">focus actuel</div>
     <div class="focus-text empty" id="focusText">aucun, tape ci-dessous</div>
     <div class="next-step" id="nextStep" hidden></div>
   </div>
-  <button class="btn-x" id="btnDone" title="terminé : le suivant de la file prend la place" aria-label="marquer le focus comme terminé">✓</button>
+  <button class="btn-x" id="btnDone" title="terminé : le suivant de la file prend la place" aria-label="marquer le focus comme terminé" data-i18n-title="doneTitle" data-i18n-aria-label="doneAria">✓</button>
 </div>
 
 <div class="capture-row">
-  <input type="text" id="input" placeholder="capture l'impulsion..." autofocus maxlength="500" aria-label="capturer une impulsion" />
-  <button class="btn-capture" id="btnAdd" title="capturer" aria-label="capturer">+</button>
+  <input type="text" id="input" placeholder="capture l'impulsion..." autofocus maxlength="500" aria-label="capturer une impulsion" data-i18n-placeholder="capturePlaceholder" data-i18n-aria-label="captureAria" />
+  <button class="btn-capture" id="btnAdd" title="capturer" aria-label="capturer" data-i18n-title="captureBtn" data-i18n-aria-label="captureBtn">+</button>
 </div>
 <div class="hint" id="hint">Entrée pour valider</div>
 
@@ -275,45 +275,46 @@ body {
   <div class="decision-btns">
     <button class="btn-d switch" id="btnGo">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>
-      je switch
+      <span data-i18n="btnSwitch">je switch</span>
       <span class="key" aria-hidden="true">1</span>
     </button>
     <button class="btn-d queue" id="btnQueue">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
-      file d'attente
+      <span data-i18n="btnQueue">file d'attente</span>
       <span class="key" aria-hidden="true">2</span>
     </button>
     <button class="btn-d drop" id="btnDrop">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>
-      laisser tomber
+      <span data-i18n="btnDrop">laisser tomber</span>
       <span class="key" aria-hidden="true">3</span>
     </button>
   </div>
 </div>
 
-<div class="section-title">file de priorités</div>
+<div class="section-title" data-i18n="queueTitle">file de priorités</div>
 <div id="queue"><div class="empty">vide, bonne concentration</div></div>
 
 <div id="doneSection" style="display:none">
-  <div class="section-title">fait aujourd'hui</div>
+  <div class="section-title" data-i18n="doneToday">fait aujourd'hui</div>
   <div id="done"></div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite">
   <span id="toastText"></span>
-  <button id="btnUndo">annuler</button>
+  <button id="btnUndo" data-i18n="undo">annuler</button>
 </div>
 
 <div class="footer">
   <span id="count">0 en file</span>
   <span>
-    <button id="btnMethod" title="découper le focus en petites étapes concrètes">découper en étapes</button>
+    <button id="btnMethod" title="découper le focus en petites étapes concrètes" data-i18n="methodBtn" data-i18n-title="methodTitle">découper en étapes</button>
     <span style="color:var(--border)"> · </span>
-    <button id="btnReset">tout vider</button>
+    <button id="btnReset" data-i18n="resetBtn">tout vider</button>
   </span>
 </div>
 
 <script src="../js/state.js"></script>
+<script src="../js/i18n.js"></script>
 <script src="../js/popup.js"></script>
 </body>
 </html>

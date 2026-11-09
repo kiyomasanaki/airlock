@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Airlock · Étapes</title>
+<title data-i18n="mTitle">Airlock · Étapes</title>
 <link rel="stylesheet" href="../css/methodology.css">
 </head>
 <body>
@@ -11,14 +11,14 @@
 <div class="layout">
 
   <!-- 25% : les impulsions -->
-  <aside class="pane pane-left" aria-label="Impulsions">
+  <aside class="pane pane-left" aria-label="Impulsions" data-i18n-aria-label="mImpulses">
     <div class="brand">
       <img src="../icons/icon48.png" alt="">
       <span>Airlock</span>
     </div>
 
     <div id="impulseList">
-      <div class="empty sunken">chargement…</div>
+      <div class="empty sunken" data-i18n="loading">chargement…</div>
     </div>
   </aside>
 
@@ -26,8 +26,8 @@
   <main class="pane pane-right" aria-live="polite">
     <div id="detail">
       <div class="state">
-        <h2>Choisis une impulsion</h2>
-        <p>Sélectionne une impulsion à gauche pour la découper en petites étapes concrètes.</p>
+        <h2 data-i18n="mPickTitle">Choisis une impulsion</h2>
+        <p data-i18n="mPickBody">Sélectionne une impulsion à gauche pour la découper en petites étapes concrètes.</p>
       </div>
     </div>
   </main>
@@ -35,6 +35,7 @@
 </div>
 
 <script src="../js/state.js"></script>
+<script src="../js/i18n.js"></script>
 <script src="../js/methodology.js"></script>
 </body>
 </html>

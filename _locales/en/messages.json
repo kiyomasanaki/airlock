@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - Capture & prioritise"
+  },
+  "description": {
+    "message": "An airlock between impulse and action. Capture the idea instead of diving into it. Global shortcut Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "Open the capture airlock"
+  }
+}
