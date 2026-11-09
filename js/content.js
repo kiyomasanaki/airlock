@@ -142,6 +142,8 @@ function createBanner(state) {
     bannerEl = null;
     return;
   }
+  // document XML ou SVG ouvert directement : pas de <body> ou accrocher la carte
+  if (!document.body) return;
 
   const isNewChat = ON_CLAUDE && (location.pathname === '/new' || location.pathname === '/');
   const hasFocus = !!state.focus;
@@ -160,7 +162,7 @@ function createBanner(state) {
   const card = el('div', 'airlock-banner');
   card.id = 'airlock-banner';
   card.setAttribute('role', 'complementary');
-  card.setAttribute('aria-label', 'Airlock — focus actuel');
+  card.setAttribute('aria-label', 'Airlock : focus actuel');
 
   // entete
   const head = el('div', 'airlock-head');
@@ -271,6 +273,7 @@ let warningEl = null;
 let warningTimer = null;
 
 function showShortcutWarning(bound) {
+  if (!document.body) return;               // cf. createBanner
   if (warningEl) warningEl.remove();
   clearTimeout(warningTimer);
 

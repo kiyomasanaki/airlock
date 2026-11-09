@@ -3,11 +3,15 @@ const EVERYWHERE_ORIGINS = ['https://*/*', 'http://*/*'];
 
 const $ = id => document.getElementById(id);
 
+// One timer per status line: an older message's timer must not clear a newer one.
+const statusTimers = {};
+
 function showStatus(id, msg, ok) {
   const el = $(id);
   el.textContent = msg;
   el.className = 'status ' + (ok ? 'ok' : 'err');
-  setTimeout(() => { el.textContent = ''; el.className = 'status'; }, 5000);
+  clearTimeout(statusTimers[id]);
+  statusTimers[id] = setTimeout(() => { el.textContent = ''; el.className = 'status'; }, 5000);
 }
 
 // ─── history ────────────────────────────────────────────────────────────
@@ -113,7 +117,7 @@ $('btnEverywhere').onclick = () => {
   // Must run straight from the click: Chrome only shows the prompt during a user gesture.
   chrome.permissions.request({ origins: EVERYWHERE_ORIGINS }, granted => {
     if (chrome.runtime.lastError || !granted) {
-      showStatus('everywhereStatus', 'Permission non accordée — rien n’a changé.', false);
+      showStatus('everywhereStatus', 'Permission non accordée : rien n’a changé.', false);
       renderEverywhere();
       return;
     }
@@ -188,7 +192,8 @@ $('fileImport').addEventListener('change', e => {
         focus: data.focus,
         queue: data.queue,
         done: data.done,
-        pending: null,
+        // exports never carry it: a capture still waiting for its answer survives
+        pending: current.pending,
         // an older export has no step breakdowns: keep the ones already here
         methodologies: data.methodologies != null ? data.methodologies : current.methodologies,
       });

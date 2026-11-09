@@ -9,7 +9,8 @@ const UNDO_MS = 8000;
 let state = airlockBlank();
 let loaded = false;          // a capture typed before the first read is replayed after it
 let captureWaiting = false;
-const ownWrites = new Set(); // serialized states we wrote, to recognise their echo
+const ownWrites = [];         // serialized states we wrote, oldest first, to recognise their echo
+let lastSaved = null;         // serialized state as last read or written
 let undoSnapshot = null;
 let undoTimer = null;
 let shortcut = '';            // the one Chrome really bound, read at startup
@@ -27,6 +28,7 @@ $('btnTheme').onclick = () => {
 function load() {
   chrome.storage.local.get([AIRLOCK_KEY], r => {
     state = airlockNormalize(r[AIRLOCK_KEY]);
+    lastSaved = JSON.stringify(state);
     loaded = true;
     render();
     if (captureWaiting) { captureWaiting = false; capture(); }
@@ -38,7 +40,11 @@ function load() {
 function save() {
   state = airlockNormalize(state);
   const json = JSON.stringify(state);
-  ownWrites.add(json);
+  // Chrome fires no onChanged for an unchanged value: that echo would never
+  // come and its entry would wait forever.
+  if (json === lastSaved) return;
+  lastSaved = json;
+  ownWrites.push(json);
   chrome.storage.local.set({ [AIRLOCK_KEY]: state });
 }
 
@@ -50,8 +56,11 @@ chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== 'local' || !changes[AIRLOCK_KEY]) return;
   const incoming = airlockNormalize(changes[AIRLOCK_KEY].newValue);
   const json = JSON.stringify(incoming);
-  if (ownWrites.delete(json)) return;
+  // echoes arrive in write order: older entries still listed were superseded
+  const i = ownWrites.indexOf(json);
+  if (i !== -1) { ownWrites.splice(0, i + 1); return; }
   state = incoming;
+  lastSaved = json;
   render();
 });
 
@@ -71,7 +80,7 @@ function render() {
   } else {
     dot.className = 'dot idle';
     ft.className = 'focus-text empty';
-    ft.textContent = 'aucun — tape ci-dessous';
+    ft.textContent = 'aucun, tape ci-dessous';
   }
   $('btnDone').disabled = !state.focus;
 
@@ -86,9 +95,12 @@ function render() {
 
   // Decision (restored if the popup was closed before answering)
   if (state.pending) {
-    $('decisionQ').innerHTML = `<b></b><br><span class="sub">ça passe devant "<span class="cur"></span>" ?</span>`;
+    // the focus can be gone meanwhile (marked done, changed from another page)
+    $('decisionQ').innerHTML = state.focus
+      ? `<b></b><br><span class="sub">ça passe devant "<span class="cur"></span>" ?</span>`
+      : `<b></b><br><span class="sub">aucun focus en cours : 1 pour en faire ton focus</span>`;
     $('decisionQ').querySelector('b').textContent = `"${state.pending}"`;
-    $('decisionQ').querySelector('.cur').textContent = state.focus || '';
+    if (state.focus) $('decisionQ').querySelector('.cur').textContent = state.focus;
     $('decision').className = 'decision visible';
     $('hint').textContent = '1 switch · 2 file · 3 laisser tomber';
   } else {
@@ -101,7 +113,7 @@ function render() {
   // Queue
   const q = $('queue');
   if (state.queue.length === 0) {
-    q.innerHTML = '<div class="empty">vide — bonne concentration</div>';
+    q.innerHTML = '<div class="empty">vide, bonne concentration</div>';
   } else {
     q.innerHTML = '';
     state.queue.forEach((item, i) => {
@@ -203,7 +215,7 @@ function decide(kind) {
   } else if (kind === 'drop') {
     // drop is a legitimate answer: no counter, no trace, only a safety net for misclicks
     state.pending = val;
-    withUndo('laissé tomber — c\'est très bien', () => { state.pending = null; });
+    withUndo('laissé tomber, c\'est très bien', () => { state.pending = null; });
     $('input').focus();
     return;
   }
