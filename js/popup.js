@@ -102,10 +102,10 @@ function render() {
     $('decisionQ').querySelector('.sub').textContent = state.focus
       ? airlockT('decisionAhead', { focus: state.focus })
       : airlockT('decisionNoFocus');
-    $('decision').className = 'decision visible';
+    $('decision').classList.add('visible');
     $('hint').textContent = airlockT('hintDecision');
   } else {
-    $('decision').className = 'decision';
+    $('decision').classList.remove('visible');
     $('hint').textContent = shortcut
       ? airlockT('hintEnterShortcut', { shortcut })
       : airlockT('hintEnter');

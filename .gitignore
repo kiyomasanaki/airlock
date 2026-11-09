@@ -33,3 +33,6 @@ CLAUDE.md
 package.sh
 .claude/
 .serena/
+
+# Built packages kept locally
+releases/

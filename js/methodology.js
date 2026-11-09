@@ -224,8 +224,10 @@ function renderDetail() {
 
   // etapes
   const ol = el('ol', 'steps');
+  // the first step not done is the one to do now
+  const current = m.steps.findIndex(s => !s.done);
   m.steps.forEach((step, i) => {
-    const li = el('li', 'step' + (step.done ? ' done' : ''));
+    const li = el('li', 'step' + (step.done ? ' done' : i === current ? ' current' : ''));
     const n = el('div', 'step-n', String(i + 1));
     const t = el('div', 'step-text', step.text);
 
