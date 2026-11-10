@@ -12,9 +12,9 @@ a submission that is missing any of them.
 | `legal-notice.md` | Legal notice (publisher, hosting, licence) |
 | `*.html`, `index.html` | Public pages built from the two files above, served by GitHub Pages |
 | `build.py` | Builds the HTML pages: `python3 docs/build.py` |
-| `fonts/` | Montserrat (SIL Open Font License), self-hosted so the pages call no third party |
+| `fonts/` | JetBrains Mono (SIL Open Font License), self-hosted so the pages call no third party |
 | `store-listing.md` | Store listing copy, ready to paste |
-| `screenshots/` | The 3 Store screenshots |
+| `screenshots/` | The 5 Store screenshots (English) |
 | `roadmap.md` | Project roadmap and guiding constraints |
 
 The legal pages are edited in Markdown, then rebuilt: re-run `python3 docs/build.py`
@@ -65,13 +65,10 @@ One-off 5 USD registration fee at
 
 ### UI language
 
-The interface is **French only** while the English listing and all documentation are
-in English. This is visible in the screenshots themselves: English marketing copy next
-to a French popup.
-
-Either localise the UI via `chrome.i18n` (French as fallback), or say so in the
-listing (the detailed description already ends with that note). Submitting an English listing with a French UI invites one-star reviews
-from users who feel misled.
+The interface is in English and French (`js/i18n.js`), following the browser language
+by default and switchable from the Options page. The Store listing can carry a French
+translation too: the French screenshot set is kept next to the release build
+(`releases/airlock-<version>-screenshots/fr/`, not versioned).
 
 ### Screenshots
 
@@ -82,16 +79,16 @@ They follow the narrative the roadmap called for: problem, capture, prioritisati
 |---|---|
 | `screenshots/1-capture.png` | Capturing the impulse |
 | `screenshots/2-decision.png` | The "does this go first?" decision |
-| `screenshots/3-priorisation.png` | One focus, an ordered queue |
+| `screenshots/3-priorisation.png` | One focus, an ordered queue, the next step |
+| `screenshots/4-steps.png` | Breaking the focus into steps |
+| `screenshots/5-reminder.png` | The reminder card on another website |
 
-They are real captures of the extension, not mockups (popup captured at 2×, then
-composed at 1× so it stays sharp).
+They are real captures of the extension (1.4.0 design, dark theme), not mockups: the
+popup is captured at 2×, then composed at 1× so it stays sharp; the steps page and the
+reminder card are captured as is.
 
-> **Out of date:** they still show the old `Ctrl+Shift+Q` shortcut in the popup hint.
-> Regenerate them before submitting.
-
-The generation script is not versioned: it depends on Playwright and a local Chromium,
-outside the scope of a build-step-free extension. To redo them after a UI change:
+The generation script is not versioned: it depends on a local Chromium, outside the
+scope of a build-step-free extension. To redo them after a UI change:
 
 1. load the repo root into Chromium with `--load-extension`
 2. inject the desired state via `chrome.storage.local.set({ airlock_state: … })`
@@ -139,8 +136,8 @@ Copy from [`store-listing.md`](store-listing.md).
 | **Short description** | see `store-listing.md` (110 chars, under the 132 limit) |
 | **Detailed description** | see `store-listing.md` |
 | **Category** | Productivity |
-| **Language** | English |
-| **Screenshots** | the 3 PNGs in `screenshots/`, 1280×800 |
+| **Language** | English (default), French |
+| **Screenshots** | the 5 PNGs in `screenshots/`, 1280×800, in file-name order |
 | **Privacy policy URL** | `https://kiyomasanaki.github.io/airlock/privacy-policy.html` |
 | **Single purpose** | Capture and prioritise user-entered focus items locally, in order to reduce context switching. |
 | **Data usage** | Tick **"This extension does not collect or use user data"** |

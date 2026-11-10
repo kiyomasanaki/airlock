@@ -1,0 +1,311 @@
+/* Airlock - popup (the airlock itself). Built on css/tokens.css.
+ *
+ * One focal point: the current focus and its next step. Everything else is
+ * quieter. The width is fixed: the popup does not grow.
+ */
+
+body {
+  width: 380px;
+  padding: 14px 16px 12px;
+  background-attachment: scroll;
+}
+
+/* ─── top bar ────────────────────────────────────────────────────────── */
+
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.brand {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--ff-mono);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0;
+  color: var(--text-2);
+}
+.brand img { width: 18px; height: 18px; border-radius: 5px; }
+
+.theme-toggle {
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text-3);
+  transition: color .16s, border-color .16s;
+}
+.theme-toggle:hover { color: var(--text); border-color: var(--line-strong); }
+.theme-toggle svg { width: 15px; height: 15px; }
+.theme-toggle .sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .moon { display: none; }
+
+/* ─── focus: the hero ────────────────────────────────────────────────── */
+
+.focus-bar {
+  position: relative;
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 14px 14px 16px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+/* ember edge: the only coloured block of the popup when nothing is pending */
+.focus-bar::before {
+  content: "";
+  position: absolute; left: 0; top: 14px; bottom: 14px;
+  width: 3px; border-radius: 0 3px 3px 0;
+  background: var(--brand-grad);
+  transition: opacity .2s;
+}
+.focus-bar:has(.dot.idle)::before { opacity: 0; }
+
+.focus-main { flex: 1; min-width: 0; }
+
+.focus-label {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+  font-family: var(--ff-mono);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0;
+  color: var(--text-3);
+}
+.dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--ok);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 18%, transparent);
+}
+.dot.idle { background: var(--text-3); box-shadow: none; }
+
+.focus-text {
+  font-family: var(--ff-disp);
+  font-size: 17px; font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.22;
+  color: var(--text);
+  word-break: break-word;
+  text-wrap: balance;
+}
+.focus-text.empty {
+  font-family: var(--ff-body);
+  font-size: 14px; font-weight: 400;
+  letter-spacing: 0;
+  color: var(--text-3);
+}
+
+/* the next step: the single thing to do now */
+.next-step {
+  margin-top: 10px;
+  padding: 9px 11px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--brand-line);
+  background: var(--brand-soft);
+  font-size: 13px; line-height: 1.4;
+  color: var(--text);
+  word-break: break-word;
+}
+.next-step[hidden] { display: none; }
+.next-step b {
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--ff-mono);
+  font-size: 9.5px; font-weight: 700;
+  letter-spacing: 0;
+  color: var(--brand);
+}
+
+#btnDone {
+  width: 34px; height: 34px;
+  border-radius: var(--r-sm);
+  font-size: 15px;
+  color: var(--ok);
+  border-color: color-mix(in srgb, var(--ok) 45%, transparent);
+}
+#btnDone:hover:not(:disabled) { background: color-mix(in srgb, var(--ok) 14%, transparent); }
+#btnDone:disabled { color: var(--text-3); border-color: var(--line); opacity: .45; }
+
+/* ─── capture ────────────────────────────────────────────────────────── */
+
+.capture-row { display: flex; gap: 8px; }
+
+#input {
+  flex: 1; min-width: 0;
+  height: 46px;
+  padding: 0 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--pill);
+  background: var(--surface-2);
+  font-size: 14.5px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .16s, box-shadow .16s;
+}
+#input::placeholder { color: var(--text-3); }
+#input:focus { border-color: var(--brand-line); box-shadow: 0 0 0 4px var(--brand-soft); }
+
+.btn-capture {
+  width: 46px; height: 46px; flex-shrink: 0;
+  display: grid; place-items: center;
+  border: none; border-radius: var(--pill);
+  background: var(--brand-grad);
+  color: var(--brand-ink);
+  font-size: 22px; font-weight: 500; line-height: 1;
+  transition: transform .16s var(--ease), filter .16s;
+}
+.btn-capture:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.btn-capture:active { transform: none; }
+
+.hint {
+  margin: 7px 4px 4px;
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+/* ─── decision ───────────────────────────────────────────────────────── */
+
+.decision { display: none; margin-top: 10px; padding: 14px; }
+.decision.visible { display: block; }
+
+.decision-q { margin-bottom: 12px; font-size: 13px; line-height: 1.4; }
+.decision-q b {
+  display: block;
+  font-family: var(--ff-disp);
+  font-size: 15px; font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--text);
+  word-break: break-word;
+}
+.decision-q br { display: none; }
+.decision-q .sub { display: block; margin-top: 4px; color: var(--text-2); font-size: 12.5px; }
+
+.decision-btns { display: flex; flex-direction: column; gap: 7px; }
+
+.btn-d {
+  display: flex; align-items: center; gap: 11px;
+  min-height: 42px;
+  padding: 0 8px 0 16px;
+  border: 1px solid transparent;
+  border-radius: var(--pill);
+  font-size: 13.5px; font-weight: 650;
+  text-align: left;
+  transition: transform .16s var(--ease), filter .16s, background-color .16s;
+}
+.btn-d svg { width: 17px; height: 17px; flex-shrink: 0; }
+.btn-d:hover { filter: brightness(1.06); }
+.btn-d:active { transform: none; }
+
+.btn-d.switch { background: var(--brand-grad); color: var(--brand-ink); }
+.btn-d.switch:hover { filter: brightness(1.05); }
+.btn-d.queue { background: var(--queue-soft); border-color: var(--queue-line); color: var(--queue); }
+.btn-d.drop { background: transparent; border-color: var(--line-strong); color: var(--neutral); }
+
+.btn-d .key {
+  margin-left: auto;
+  min-width: 24px; height: 24px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  font-family: var(--ff-mono);
+  font-size: 11.5px; font-weight: 700;
+  background: rgba(0, 0, 0, .1);
+}
+.btn-d.queue .key, .btn-d.drop .key { background: var(--sunk); }
+
+/* ─── lists ──────────────────────────────────────────────────────────── */
+
+.section-title {
+  display: flex; align-items: center; gap: 9px;
+  margin: 18px 2px 8px;
+  font-family: var(--ff-mono);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0;
+  color: var(--text-3);
+}
+.section-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+.queue-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 6px 6px 12px;
+  margin-bottom: 5px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+}
+/* only the next in line gets the queue colour */
+.queue-item.top { border-color: var(--queue-line); background: var(--queue-soft); }
+.queue-item.top .qnum { color: var(--queue); }
+.queue-item.top .qtext { color: var(--text); }
+
+.qnum {
+  min-width: 16px;
+  font-family: var(--ff-mono);
+  font-size: 11px; font-weight: 600;
+  color: var(--text-3);
+}
+.qtext { flex: 1; font-size: 12.5px; color: var(--text-2); word-break: break-word; }
+.qbtns { display: flex; gap: 3px; opacity: .55; transition: opacity .16s; }
+.queue-item:hover .qbtns, .queue-item:focus-within .qbtns, .queue-item.top .qbtns { opacity: 1; }
+
+.btn-x {
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text-3);
+  font-size: 12px; line-height: 1;
+  transition: color .16s, border-color .16s;
+}
+.btn-x:hover { color: var(--text); border-color: var(--line-strong); }
+.btn-x.go { color: var(--queue); border-color: var(--queue-line); }
+.btn-x.danger:hover { color: var(--danger); border-color: currentColor; }
+
+.empty { padding: 4px 2px; }
+
+.done-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 3px 2px;
+  font-size: 12px; color: var(--text-3);
+}
+.done-item span:last-child { text-decoration: line-through; text-decoration-color: var(--line-strong); }
+.done-item .check { color: var(--ok); font-weight: 700; }
+
+/* ─── toast ──────────────────────────────────────────────────────────── */
+
+.toast {
+  display: none; align-items: center; gap: 10px;
+  margin-top: 12px; padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--toast-bg); color: var(--toast-text);
+  font-size: 12.5px;
+  animation: rise .2s var(--ease);
+}
+.toast.visible { display: flex; }
+.toast span { flex: 1; word-break: break-word; }
+.toast button {
+  border: none; background: none; padding: 0;
+  font-weight: 700; color: inherit;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(4px); } }
+
+/* ─── footer ─────────────────────────────────────────────────────────── */
+
+.footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 16px; padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-family: var(--ff-mono);
+  font-size: 10.5px;
+  color: var(--text-3);
+}
+.footer button {
+  border: none; background: none; padding: 0;
+  font-family: var(--ff-body); font-size: 11.5px; font-weight: 500;
+  color: var(--text-2);
+  text-decoration: underline; text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+}
+.footer button:hover { color: var(--text); }
+#btnMethod { color: var(--brand); font-weight: 600; }
+.footer .sep { color: var(--line-strong); }

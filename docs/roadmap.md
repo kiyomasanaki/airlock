@@ -73,6 +73,12 @@ daily workflow.
 - **UI localisation** *(done in 1.3.0)*: English and French, switchable live from the
   Options page through a small dictionary (`js/i18n.js`), since `chrome.i18n` cannot
   change language at runtime; `chrome.i18n` only localises the manifest
+- **Unified visual design** *(done in 1.4.0)*: one palette and one type system for the
+  popup, Options, steps page, reminder card and website, based on the wqqz.dev theme
+  (`css/tokens.css`, JetBrains Mono bundled in `fonts/`, no network call). Built for
+  ADHD: one focal point per screen (the focus and its next step), fixed colour meanings
+  (switch = violet, queue = teal, drop = neutral, never red), no looping animation,
+  contrast checked AA in light and dark
 
 **Exit condition:** all of the above is ready and the extension has been used
 throughout Phase 1 with no blocking bug encountered.
@@ -144,7 +150,10 @@ until the next navigation.
   into view when the window shrinks
 - One pulse per minute, starting 30 seconds after the page loads. A reminder, not an
   alarm: it never fires while dragging, never on a background tab, and is dropped
-  entirely under `prefers-reduced-motion`
+  entirely under `prefers-reduced-motion`. *Replaced in 1.4.0:* the card now shows for
+  30 seconds, rests for 2 minutes, and comes back, on a loop. It never leaves while the
+  pointer is on it or during a drag; the close button hides it on every tab until the
+  focus changes
 - Redesigned around a clear hierarchy. The focus text is the dominant element,
   the label sits above it in small caps, and the queue count moved to a separate
   footer chip instead of competing on the same line

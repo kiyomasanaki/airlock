@@ -16,6 +16,10 @@ const AIRLOCK_DONE_MAX = 1000;      // full history lives on the Options page
 // "Ne plus afficher" on the unbound-shortcut warning (Options page). Kept apart
 // from airlock_state: a UI preference, not user data, so never exported.
 const AIRLOCK_SHORTCUT_DISMISSED_KEY = 'shortcutWarningDismissed';
+// Reminder card closed with ×: { focus } it was closed for (null on the no-focus
+// card). Hidden on every tab while that focus stays; the service worker drops the
+// key when the focus changes. UI state as well, never exported.
+const AIRLOCK_CARD_CLOSED_KEY = 'airlock_card_closed';
 
 function airlockBlank() {
   return { focus: null, queue: [], done: [], pending: null, methodologies: {} };
