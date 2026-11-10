@@ -74,10 +74,11 @@ daily workflow.
   Options page through a small dictionary (`js/i18n.js`), since `chrome.i18n` cannot
   change language at runtime; `chrome.i18n` only localises the manifest
 - **Unified visual design** *(done in 1.4.0)*: one palette and one type system for the
-  popup, Options, steps page and reminder card (`css/tokens.css`, fonts bundled in
-  `fonts/`, no network call). Built for ADHD: one focal point per screen (the focus and
-  its next step), fixed colour meanings (switch = ember, queue = blue, drop = neutral,
-  never red), no looping animation, contrast checked AA in light and dark
+  popup, Options, steps page, reminder card and website, based on the wqqz.dev theme
+  (`css/tokens.css`, JetBrains Mono bundled in `fonts/`, no network call). Built for
+  ADHD: one focal point per screen (the focus and its next step), fixed colour meanings
+  (switch = violet, queue = teal, drop = neutral, never red), no looping animation,
+  contrast checked AA in light and dark
 
 **Exit condition:** all of the above is ready and the extension has been used
 throughout Phase 1 with no blocking bug encountered.

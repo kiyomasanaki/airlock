@@ -5,10 +5,10 @@ Standard library only, like the rest of the project. Handles the subset of
 Markdown the legal documents use: headings, paragraphs, "-" lists, bold,
 italics, inline code, [links](url), <autolinks> and bare URLs.
 
-Look: the darkminimal.vercel.app template, followed as is (#101010
-background, Montserrat, floating nav with active dot, hairline-separated
-sections with a small accent label above a large title). The only change:
-the template's shining violet text (.shiny-sec) shines violet to yellow.
+Look: the wqqz.dev Astro theme (MIT, github.com/imwqqz/wqqz.dev), the same one
+the extension uses: zinc greys, JetBrains Mono for all text, one violet accent,
+centred text nav, a single 48rem column, bracketed contact links. Light or dark
+follows the system. The font is served from docs/fonts, no third-party request.
 
 Run from anywhere: python3 docs/build.py
 """
@@ -26,109 +26,80 @@ PAGES = {
 }
 
 CSS = """
-@font-face { font-family: "Montserrat Variable"; font-style: normal; font-weight: 100 900;
-  font-display: swap; src: url(fonts/montserrat-latin-wght-normal.woff2) format("woff2-variations"); }
-:root { --background: #101010; --sec: #a476ff; --yellow: #ffd84d; --white: #dfdfdf;
-  --white-icon: #f3f3f398; --white-icon-tr: #f3f3f310; color-scheme: dark; }
-* { box-sizing: border-box; margin: 0; padding: 0;
-  font-family: "Montserrat Variable", -apple-system, system-ui, sans-serif; }
-html { -webkit-text-size-adjust: 100%; line-height: 1.5; scroll-padding-top: 100px; }
-body { background: var(--background); color: var(--white); padding: 0 36px 70px; }
-::selection { background-color: var(--sec); color: var(--background); }
-a { color: inherit; text-decoration: inherit; }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800;
+  font-display: swap; src: url(fonts/jetbrains-mono-latin-wght.woff2) format("woff2"); }
+:root { --background: #fbfcfd; --foreground: #18181b; --muted: #606067; --card: #ffffff;
+  --border: #e4e4e7; --accent: #7945df; --accent-soft: rgba(121, 69, 223, .5); color-scheme: light; }
+@media (prefers-color-scheme: dark) {
+  :root { --background: #0a0a0c; --foreground: #e4e4e7; --muted: #8e8e96; --card: #121215;
+    --border: #262629; --accent: #a889ff; --accent-soft: rgba(168, 137, 255, .5); color-scheme: dark; }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 80px; }
+body { min-height: 100vh; display: flex; flex-direction: column; background: var(--background); color: var(--foreground);
+  font: 15px/1.7 "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  -webkit-font-smoothing: antialiased; }
+::selection { background: var(--accent); color: var(--background); }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
 
-/* the template's shining accent text, violet to yellow instead of violet to white */
-.shiny-sec { background: linear-gradient(135deg, var(--sec) 0%, var(--yellow) 50%, var(--sec) 100%) 0 0 / 200% 100%;
-  color: transparent; -webkit-background-clip: text; background-clip: text; animation: shine 3s linear infinite; }
-@keyframes shine { 0% { background-position: 100%; } 30%, 70% { background-position: 0%; } }
+/* sticky centred text nav, as in the theme */
+nav { position: sticky; top: 0; z-index: 50; background: color-mix(in srgb, var(--background) 88%, transparent);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+nav ul { list-style: none; display: flex; justify-content: center; align-items: center; gap: 24px; height: 64px;
+  padding: 0 24px; flex-wrap: wrap; }
+nav a { font-size: .875rem; color: var(--muted); transition: color .15s; }
+nav a:hover { color: var(--foreground); }
+nav a[aria-current="page"] { color: var(--foreground); font-weight: 500; }
 
-/* floating nav: bottom on phones, top on desktop, active dot like the template */
-.nav-wrap { display: flex; justify-content: center; width: 100%; }
-nav { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 100; width: 80%;
-  background: var(--background); border: 1px solid transparent; backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px); transition: all .5s ease-in-out; }
-nav.scrolling { border-color: #ffffff10; border-radius: 1rem 1rem 0 0; }
-nav ul { list-style: none; display: flex; justify-content: space-between; gap: 24px; padding: 12px; }
-nav li { flex: 1; text-align: center; }
-nav a { position: relative; display: inline-block; color: var(--white-icon); font-size: 12px; transition: color .3s; }
-nav a:hover, nav a.active { color: #fff; }
-nav a .dot { display: none; position: absolute; left: -24px; top: 50%; width: 8px; height: 8px; border-radius: 50%;
-  background: #A9FF5B; transform: translateY(-50%) scale(0); opacity: 0; transition: all .3s; }
-nav a.active .dot { transform: translateY(-50%) scale(1); opacity: 1; }
+main { flex: 1; display: flex; flex-direction: column; width: 100%; max-width: 48rem; margin: 0 auto; padding: 48px 24px 64px; }
+main.home { justify-content: center; }
 
-.wrap { max-width: 64rem; margin: 0 auto; }
+h1 { font-size: 2.25rem; line-height: 1.15; font-weight: 700; letter-spacing: -.025em; text-wrap: balance; margin-bottom: 8px; }
+.role { font-size: 1.125rem; color: var(--muted); margin-bottom: 16px; }
+.lead { color: color-mix(in srgb, var(--foreground) 85%, transparent); text-wrap: pretty; margin-bottom: 16px; }
 
-/* hero */
-.hero { margin-top: 48px; padding-bottom: 56px; }
-.hero .hi { font-size: 1rem; color: var(--white-icon); margin-bottom: 16px; }
-.hero .row { display: flex; flex-direction: column; gap: 16px; }
-.hero h1 { color: var(--white); font-size: 3rem; line-height: 1; font-weight: 500; text-wrap: pretty; }
-.hero .lead { font-size: 1rem; color: var(--white-icon); }
-.hero .pill-row { display: flex; gap: 8px; padding-top: 12px; }
+/* [label: link] rows */
+.contacts { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 24px; font-size: .875rem; }
+.contacts a, .prose a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px;
+  text-decoration-color: var(--accent-soft); overflow-wrap: anywhere; transition: color .15s, text-decoration-color .15s; }
+.contacts a:hover, .prose a:hover { color: var(--accent); text-decoration-color: var(--accent); }
 
-/* sections */
-section { padding: 48px 0; border-top: 1px solid #ffffff10; color: var(--white); }
-section h2 { font-size: 1.125rem; line-height: 1.75rem; margin-bottom: 8px; font-weight: 400; }
-section h3 { font-size: 2.25rem; line-height: 2.5rem; font-weight: 500; margin-bottom: 32px; }
-section h4 { font-size: 1.25rem; font-weight: 600; margin: 24px 0 8px; }
-.prose { color: var(--white-icon); max-width: 48rem; }
+.list { list-style: none; margin-top: 40px; border-top: 1px solid var(--border); }
+.list li { border-bottom: 1px solid var(--border); }
+.list a { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; padding: 16px 0; transition: color .15s; }
+.list a:hover .t { color: var(--accent); }
+.list .t { font-weight: 600; }
+.list .d { color: var(--muted); font-size: .875rem; }
+
+/* document pages */
+.updated { font-size: .875rem; color: var(--muted); margin-bottom: 8px; }
+.prose { color: color-mix(in srgb, var(--foreground) 85%, transparent); }
+.prose h2 { margin: 40px 0 12px; font-size: 1.25rem; line-height: 1.4; font-weight: 700; letter-spacing: -.01em;
+  color: var(--foreground); }
+.prose h2::before { content: "## "; color: var(--accent); font-weight: 500; }
+.prose h4 { margin: 24px 0 8px; font-size: 1rem; font-weight: 600; color: var(--foreground); }
 .prose p, .prose ul { margin-bottom: 16px; }
 .prose ul { list-style: none; }
-.prose li { position: relative; padding-left: 20px; margin-bottom: 8px; }
-.prose li::before { content: ""; position: absolute; left: 0; top: .65em; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--white-icon); }
-.prose strong { color: var(--white); font-weight: 600; }
-.prose a { color: var(--white); text-decoration: underline; text-decoration-color: var(--white-icon);
-  text-underline-offset: 3px; overflow-wrap: anywhere; transition: text-decoration-color .3s; }
-.prose a:hover { text-decoration-color: var(--white); }
-.prose code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9em; color: var(--white);
-  background: #1414149c; border: 1px solid var(--white-icon-tr); border-radius: 6px; padding: 1px 6px; overflow-wrap: anywhere; }
+.prose li { position: relative; padding-left: 20px; margin-bottom: 6px; }
+.prose li::before { content: "-"; position: absolute; left: 0; color: var(--muted); }
+.prose strong { color: var(--foreground); font-weight: 600; }
+.prose code { font-family: inherit; font-size: .875em; color: var(--foreground); background: var(--card);
+  border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; overflow-wrap: anywhere; }
 
-/* buttons and cards, as in the template */
-.icon-btn { display: inline-flex; align-items: center; gap: 8px; color: var(--white-icon); border: 1px solid var(--white-icon-tr);
-  padding: 12px 16px; border-radius: .75rem; background: #1414149c; transition: all .3s ease-in-out; }
-.icon-btn:hover { color: #fff; background: var(--white-icon-tr); }
-.pill { border-radius: 9999px; }
-.grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
-.card { display: block; border: 1px solid var(--white-icon-tr); border-radius: 1rem; background: #1414149c;
-  padding: 28px; transition: all .3s ease-in-out; }
-.card:hover { background: var(--white-icon-tr); }
-.card h4 { font-size: 1.5rem; font-weight: 600; color: var(--white); margin-bottom: 4px; }
-.card span { font-size: .875rem; color: var(--white-icon); }
+footer { border-top: 1px solid var(--border); }
+footer div { max-width: 48rem; margin: 0 auto; padding: 24px; display: flex; flex-wrap: wrap; gap: 8px 24px;
+  justify-content: space-between; font-size: .8125rem; color: var(--muted); }
+footer a:hover { color: var(--foreground); }
 
-footer { padding: 48px 0; border-top: 1px solid #ffffff10; }
-footer .wrap { display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; align-items: center;
-  color: var(--white-icon); font-size: .875rem; }
-footer a:hover { color: var(--white); }
-
-@media (min-width: 640px) { body { padding-left: 112px; padding-right: 112px; } }
 @media (min-width: 768px) {
-  nav { top: 24px; bottom: auto; }
-  nav.scrolling { border-radius: 9999px; }
-  nav ul { justify-content: center; gap: 48px; }
-  nav li { flex: none; }
-  nav a { font-size: 1rem; }
-  nav a .dot { display: block; }
-  body { padding-bottom: 0; }
-  .hero { margin-top: 0; padding: 144px 0 56px; }
-  .hero .hi { font-size: 1.125rem; }
-  .hero h1 { font-size: 3.75rem; }
-  .hero .lead { font-size: 1.5rem; line-height: 2rem; }
-  .hero .pill-row { padding-top: 24px; }
-  section h3 { font-size: 3rem; line-height: 1; }
-  .grid { grid-template-columns: 1fr 1fr; }
+  body { font-size: 16px; }
+  h1 { font-size: 3rem; }
+  .role { font-size: 1.25rem; }
+  main { padding-top: 64px; }
 }
-@media (min-width: 1024px) {
-  body { padding-left: 80px; padding-right: 80px; }
-  .hero .row { flex-direction: row; align-items: center; gap: 48px; }
-  .hero h1 { flex: none; }
-}
-@media (prefers-reduced-motion: reduce) { .shiny-sec { animation: none; } * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 """
-
-# the template's nav turns into a bordered pill once the page scrolls
-SCRIPT = """addEventListener('scroll', () =>
-  document.querySelector('nav').classList.toggle('scrolling', scrollY > 10), { passive: true });"""
 
 
 def inline(text):
@@ -177,11 +148,8 @@ def to_html(md):
                 title = heading.group(2)
                 continue
             if level == 2:
-                if count:
-                    out.append("</div></div></section>")
                 count += 1
-                out.append(f'<section><div class="wrap"><h2 class="shiny-sec">{count:02d}</h2>'
-                           f'<h3>{inline(heading.group(2))}</h3><div class="prose">')
+                out.append(f"<h2>{inline(heading.group(2))}</h2>")
             else:
                 out.append(f"<h4>{inline(heading.group(2))}</h4>")
         elif re.match(r"[-*]\s+", stripped):
@@ -195,22 +163,18 @@ def to_html(md):
                 flush()
             para.append(stripped)
     flush()
-    if count:
-        out.append("</div></div></section>")
 
     # "Privacy Policy - Airlock Extension" -> "Privacy Policy"
     short = re.sub(r"\s+-\s+.*$", "", title)
-    hero = (f'<header class="hero"><div class="wrap"><p class="hi">Airlock extension</p>'
-            f'<div class="row"><h1>{inline(short)}</h1>'
-            f'<p class="lead">{"<br>".join(lead)}</p></div></div></header>')
-    return title, hero + "\n" + "\n".join(out)
+    hero = (f'<h1>{inline(short)}</h1>'
+            f'<p class="updated">{"<br>".join(lead)}</p>')
+    return title, f'<main>{hero}\n<div class="prose">\n' + "\n".join(out) + "\n</div></main>"
 
 
 def page(title, lang, current, body):
     items = [("index.html", "Home")] + [(dest, label) for dest, _, label in PAGES.values()]
     links = "\n".join(
-        f'<li><a href="{href}"{" class=\"active\"" if href == current else ""}>'
-        f'<span class="dot"></span>{label}</a></li>'
+        f'<li><a href="{href}"{" aria-current=\"page\"" if href == current else ""}>{label}</a></li>'
         for href, label in items
     )
     return f"""<!doctype html>
@@ -219,37 +183,36 @@ def page(title, lang, current, body):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)}</title>
-<link rel="preload" href="fonts/montserrat-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/jetbrains-mono-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
 <style>{CSS}</style>
 </head>
 <body>
-<div class="nav-wrap"><nav><ul>
+<nav><ul>
 {links}
-</ul></nav></div>
+</ul></nav>
 {body}
-<footer><div class="wrap"><span>Airlock · MIT licence</span>
+<footer><div><span>Airlock · MIT licence</span>
 <a href="{REPO}">github.com/kiyomasanaki/airlock</a></div></footer>
-<script>{SCRIPT}</script>
 </body>
 </html>
 """
 
 
-INDEX = f"""<header class="hero"><div class="wrap">
-<p class="hi">Chrome extension</p>
-<div class="row"><h1>Airlock</h1>
-<p class="lead">A buffer zone between an impulse and the action it triggers. Built for ADHD brains,
-<span class="shiny-sec">100% local, zero telemetry</span>.</p></div>
-<div class="pill-row"><a class="icon-btn" href="{REPO}">GitHub</a></div>
-</div></header>
-<section><div class="wrap">
-<h2 class="shiny-sec">Transparency</h2>
-<h3>Legal</h3>
-<div class="grid">
-<a class="card" href="privacy-policy.html"><h4>Privacy policy</h4><span>What Airlock stores, and what never leaves your machine.</span></a>
-<a class="card" href="legal-notice.html"><h4>Legal notice</h4><span>Publisher, hosting, licence.</span></a>
+INDEX = f"""<main class="home">
+<h1>Airlock</h1>
+<p class="role">Chrome extension · built for ADHD</p>
+<p class="lead">A buffer zone between an impulse and the action it triggers. Capture the idea with one
+shortcut instead of diving into it, then decide: switch, queue or drop.</p>
+<p class="lead">100% local, zero telemetry, no account.</p>
+<div class="contacts">
+<div>[github: <a href="{REPO}">kiyomasanaki/airlock</a>]</div>
+<div>[licence: <a href="{REPO}/blob/main/LICENSE">MIT</a>]</div>
 </div>
-</div></section>"""
+<ul class="list">
+<li><a href="privacy-policy.html"><span class="t">Privacy policy</span><span class="d">What Airlock stores, and what never leaves your machine.</span></a></li>
+<li><a href="legal-notice.html"><span class="t">Legal notice</span><span class="d">Publisher, hosting, licence.</span></a></li>
+</ul>
+</main>"""
 
 
 def main():

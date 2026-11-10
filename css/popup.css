@@ -20,7 +20,7 @@ body {
   display: flex; align-items: center; gap: 8px;
   font-family: var(--ff-mono);
   font-size: 11px; font-weight: 700;
-  letter-spacing: .2em; text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--text-2);
 }
 .brand img { width: 18px; height: 18px; border-radius: 5px; }
@@ -66,7 +66,7 @@ body {
   margin-bottom: 6px;
   font-family: var(--ff-mono);
   font-size: 10px; font-weight: 600;
-  letter-spacing: .16em; text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--text-3);
 }
 .dot {
@@ -79,8 +79,8 @@ body {
 
 .focus-text {
   font-family: var(--ff-disp);
-  font-size: 19px; font-weight: 600;
-  letter-spacing: -.022em;
+  font-size: 17px; font-weight: 700;
+  letter-spacing: -.02em;
   line-height: 1.22;
   color: var(--text);
   word-break: break-word;
@@ -110,13 +110,13 @@ body {
   margin-bottom: 2px;
   font-family: var(--ff-mono);
   font-size: 9.5px; font-weight: 700;
-  letter-spacing: .16em; text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--brand);
 }
 
 #btnDone {
   width: 34px; height: 34px;
-  border-radius: 50%;
+  border-radius: var(--r-sm);
   font-size: 15px;
   color: var(--ok);
   border-color: color-mix(in srgb, var(--ok) 45%, transparent);
@@ -146,7 +146,7 @@ body {
 .btn-capture {
   width: 46px; height: 46px; flex-shrink: 0;
   display: grid; place-items: center;
-  border: none; border-radius: 50%;
+  border: none; border-radius: var(--pill);
   background: var(--brand-grad);
   color: var(--brand-ink);
   font-size: 22px; font-weight: 500; line-height: 1;
@@ -170,8 +170,8 @@ body {
 .decision-q b {
   display: block;
   font-family: var(--ff-disp);
-  font-size: 16px; font-weight: 600;
-  letter-spacing: -.015em;
+  font-size: 15px; font-weight: 700;
+  letter-spacing: -.01em;
   color: var(--text);
   word-break: break-word;
 }
@@ -191,7 +191,7 @@ body {
   transition: transform .16s var(--ease), filter .16s, background-color .16s;
 }
 .btn-d svg { width: 17px; height: 17px; flex-shrink: 0; }
-.btn-d:hover { transform: translateX(2px); }
+.btn-d:hover { filter: brightness(1.06); }
 .btn-d:active { transform: none; }
 
 .btn-d.switch { background: var(--brand-grad); color: var(--brand-ink); }
@@ -217,7 +217,7 @@ body {
   margin: 18px 2px 8px;
   font-family: var(--ff-mono);
   font-size: 10px; font-weight: 600;
-  letter-spacing: .16em; text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--text-3);
 }
 .section-title::after { content: ""; flex: 1; height: 1px; background: var(--line); }
@@ -227,7 +227,7 @@ body {
   padding: 6px 6px 6px 12px;
   margin-bottom: 5px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-sm);
   background: var(--surface);
 }
 /* only the next in line gets the queue colour */
@@ -241,7 +241,7 @@ body {
   font-size: 11px; font-weight: 600;
   color: var(--text-3);
 }
-.qtext { flex: 1; font-size: 13px; color: var(--text-2); word-break: break-word; }
+.qtext { flex: 1; font-size: 12.5px; color: var(--text-2); word-break: break-word; }
 .qbtns { display: flex; gap: 3px; opacity: .55; transition: opacity .16s; }
 .queue-item:hover .qbtns, .queue-item:focus-within .qbtns, .queue-item.top .qbtns { opacity: 1; }
 

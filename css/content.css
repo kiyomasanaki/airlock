@@ -2,47 +2,48 @@
  * option is turned on from the Options page)
  *
  * Floating, draggable card, anchored bottom right by default.
- * Same palette as css/tokens.css, copied rather than imported: this file is
+ * Same palette as css/tokens.css (the wqqz.dev theme), copied rather than imported: this file is
  * injected into third-party pages, so everything is prefixed with our ids and
- * the variables are scoped to our own elements. System fonts on purpose:
+ * the variables are scoped to our own elements. System monospace on purpose:
  * bundled fonts would need web_accessible_resources, which lets any site
  * detect the extension.
  */
 
 #airlock-banner, #airlock-shortcut-warning {
-  --al-bg: rgba(255, 252, 248, .94);
-  --al-sunk: rgba(40, 24, 10, .05);
-  --al-line: rgba(40, 24, 10, .12);
-  --al-line-strong: rgba(40, 24, 10, .22);
-  --al-text: #1b1612;
-  --al-text-2: #57504a;
-  --al-text-3: #756c63;
-  --al-brand: #a8380a;
-  --al-brand-grad: linear-gradient(135deg, #f7a21b 0%, #ec6a2c 55%, #e25a6e 100%);
-  --al-brand-soft: rgba(236, 106, 44, .11);
-  --al-brand-line: rgba(217, 84, 30, .35);
-  --al-ok: #0f7543;
-  --al-warn: #9a5b00;
-  --al-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset, 0 18px 50px rgba(70, 40, 10, .18), 0 2px 6px rgba(70, 40, 10, .08);
-  --al-pulse: rgba(236, 106, 44, .30);
-  --al-mono: ui-monospace, SFMono-Regular, "Cascadia Mono", Menlo, Consolas, monospace;
+  --al-bg: #ffffff;
+  --al-sunk: #f0f0f1;
+  --al-line: #e4e4e7;
+  --al-line-strong: #d4d4d8;
+  --al-text: #18181b;
+  --al-text-2: #3f3f46;
+  --al-text-3: #606067;
+  --al-brand: #7945df;
+  --al-brand-grad: linear-gradient(#7945df, #7945df);
+  --al-brand-soft: rgba(121, 69, 223, .08);
+  --al-brand-line: rgba(121, 69, 223, .40);
+  --al-ok: #15803d;
+  --al-warn: #a35a00;
+  --al-shadow: 0 10px 30px rgba(24, 24, 27, .12), 0 1px 3px rgba(24, 24, 27, .08);
+  --al-pulse: rgba(121, 69, 223, .28);
+  --al-mono: ui-monospace, SFMono-Regular, "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
   #airlock-banner, #airlock-shortcut-warning {
-    --al-bg: rgba(20, 17, 23, .94);
-    --al-sunk: rgba(0, 0, 0, .3);
-    --al-line: rgba(255, 236, 220, .11);
-    --al-line-strong: rgba(255, 236, 220, .22);
-    --al-text: #f4eee8;
-    --al-text-2: #b9afa6;
-    --al-text-3: #8d837a;
-    --al-brand: #ff9a5c;
-    --al-brand-soft: rgba(255, 122, 61, .13);
-    --al-brand-line: rgba(255, 140, 80, .34);
-    --al-ok: #4fd99a;
-    --al-warn: #f5b84a;
-    --al-shadow: 0 1px 0 rgba(255, 220, 190, .06) inset, 0 22px 60px rgba(0, 0, 0, .55), 0 2px 8px rgba(0, 0, 0, .35);
-    --al-pulse: rgba(255, 122, 61, .32);
+    --al-bg: #121215;
+    --al-sunk: #1b1b1e;
+    --al-line: #262629;
+    --al-line-strong: #34343a;
+    --al-text: #e4e4e7;
+    --al-text-2: #b4b4bb;
+    --al-text-3: #8e8e96;
+    --al-brand: #a889ff;
+    --al-brand-grad: linear-gradient(#a889ff, #a889ff);
+    --al-brand-soft: rgba(168, 137, 255, .10);
+    --al-brand-line: rgba(168, 137, 255, .40);
+    --al-ok: #2ac45c;
+    --al-warn: #f49f1e;
+    --al-shadow: 0 14px 40px rgba(0, 0, 0, .55), 0 1px 3px rgba(0, 0, 0, .4);
+    --al-pulse: rgba(168, 137, 255, .30);
   }
 }
 
@@ -64,12 +65,10 @@
 
   background: var(--al-bg);
   border: 1px solid var(--al-line);
-  border-radius: 18px;
+  border-radius: 10px;
   box-shadow: var(--al-shadow);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  backdrop-filter: blur(16px) saturate(140%);
 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-family: var(--al-mono);
   font-size: 13px;
   font-weight: 400;
   line-height: 1.5;
@@ -80,7 +79,7 @@
 
   animation: airlockIn 0.28s cubic-bezier(.2, .7, .2, 1);
 }
-/* ember edge, as on the popup's focus card */
+/* accent edge, as on the popup's focus card */
 #airlock-banner.airlock-banner::before {
   content: "";
   position: absolute;
@@ -128,8 +127,7 @@
   font-family: var(--al-mono);
   font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: .16em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--al-text-3);
   white-space: nowrap;
   overflow: hidden;
@@ -213,8 +211,7 @@
   font-family: var(--al-mono);
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: .16em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--al-brand);
 }
 #airlock-banner .airlock-next-text {
@@ -306,13 +303,11 @@
 
   background: var(--al-bg);
   border: 1px solid var(--al-line);
-  border-radius: 18px;
+  border-radius: 10px;
   box-shadow: var(--al-shadow);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  backdrop-filter: blur(16px) saturate(140%);
   overflow: hidden;
 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-family: var(--al-mono);
   font-size: 13px;
   line-height: 1.5;
   color: var(--al-text);
