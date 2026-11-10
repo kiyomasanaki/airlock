@@ -24,7 +24,6 @@
   --al-ok: #15803d;
   --al-warn: #a35a00;
   --al-shadow: 0 10px 30px rgba(24, 24, 27, .12), 0 1px 3px rgba(24, 24, 27, .08);
-  --al-pulse: rgba(121, 69, 223, .28);
   --al-mono: ui-monospace, SFMono-Regular, "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
@@ -43,7 +42,6 @@
     --al-ok: #2ac45c;
     --al-warn: #f49f1e;
     --al-shadow: 0 14px 40px rgba(0, 0, 0, .55), 0 1px 3px rgba(0, 0, 0, .4);
-    --al-pulse: rgba(168, 137, 255, .30);
   }
 }
 
@@ -275,16 +273,6 @@
   white-space: nowrap;
 }
 
-/* ─── reminder: one pulse a minute ───────────────────────────────────── */
-
-#airlock-banner.airlock-pulse { animation: airlockPulse 1.1s ease-in-out; }
-
-@keyframes airlockPulse {
-  0%, 100% { box-shadow: var(--al-shadow), 0 0 0 0 transparent; }
-  35%      { box-shadow: var(--al-shadow), 0 0 0 5px var(--al-pulse); }
-  70%      { box-shadow: var(--al-shadow), 0 0 0 11px transparent; }
-}
-
 /* ─── warning: shortcut not bound ────────────────────────────────────── */
 
 /* Above the reminder card when both sit bottom right. */
@@ -364,10 +352,9 @@
 }
 #airlock-shortcut-warning .airlock-warning-btn:hover { border-color: var(--al-brand-line); background: var(--al-brand-soft); }
 
-/* The pulse is a reminder, not an alarm: removed for whoever asks for less
-   motion, without replacing it by another movement. */
+/* The card coming back is a reminder, not an alarm: no entrance movement for
+   whoever asks for less motion. */
 @media (prefers-reduced-motion: reduce) {
   #airlock-banner.airlock-banner { animation: none; }
-  #airlock-banner.airlock-pulse  { animation: none; }
   #airlock-shortcut-warning.airlock-warning { animation: none; }
 }

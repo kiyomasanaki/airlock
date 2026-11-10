@@ -150,7 +150,10 @@ until the next navigation.
   into view when the window shrinks
 - One pulse per minute, starting 30 seconds after the page loads. A reminder, not an
   alarm: it never fires while dragging, never on a background tab, and is dropped
-  entirely under `prefers-reduced-motion`
+  entirely under `prefers-reduced-motion`. *Replaced in 1.4.0:* the card now shows for
+  30 seconds, rests for 2 minutes, and comes back, on a loop. It never leaves while the
+  pointer is on it or during a drag; the close button hides it on every tab until the
+  focus changes
 - Redesigned around a clear hierarchy. The focus text is the dominant element,
   the label sits above it in small caps, and the queue count moved to a separate
   footer chip instead of competing on the same line

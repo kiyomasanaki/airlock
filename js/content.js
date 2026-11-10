@@ -6,17 +6,17 @@
 //
 // Carte flottante rappelant le focus courant :
 //  - ancree en bas a droite par defaut, deplacable, position persistee
-//  - une pulsation par minute, a partir de 30 s apres le chargement
+//  - visible 30 s, puis masquee 2 min, et ainsi de suite
+//  - la croix la masque sur tous les onglets jusqu'au prochain focus
 //
-// Le rappel doit se remarquer sans harceler : une seule pulsation, jamais
-// pendant un deplacement, jamais sur un onglet en arriere-plan.
+// Le rappel doit se remarquer sans harceler : il revient de lui-meme, mais ne
+// disparait jamais sous la souris ni pendant un deplacement.
 
 const KEY = AIRLOCK_KEY;
 const UI_KEY = 'airlock_ui';        // position de la carte, hors donnees exportees
 
-const PULSE_DELAY = 30000;          // premier rappel : 30 s apres le chargement
-const PULSE_EVERY = 60000;          // puis toutes les minutes
-const PULSE_MS = 1100;              // duree de l'animation, cf. content.css
+const SHOW_MS = 30000;              // duree d'affichage de la carte
+const REST_MS = 120000;             // puis pause avant de la remontrer
 const MARGIN = 12;                  // marge minimale au bord de la fenetre
 
 const ON_CLAUDE = location.hostname === 'claude.ai';
@@ -25,10 +25,11 @@ let bannerEl = null;
 let pos = null;                     // { left, top } une fois deplacee
 let dragging = false;
 let lastSig = null;                 // evite de reconstruire la carte pour rien
-let dismissed = false;              // masquee par l'utilisateur sur cette page
+let closed = null;                  // { focus } pour lequel la croix a ete cliquee
+let resting = false;                // en pause entre deux affichages
+let cycleTimer = null;              // prochaine bascule affichage / pause
+let hovered = false;                // pointeur sur la carte
 let shortcut = '';                  // raccourci reellement assigne, '' si aucun
-
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 // ─── etat ───────────────────────────────────────────────────────────────
 
@@ -40,9 +41,10 @@ function alive() {
 
 function getState(cb) {
   if (!alive()) return;
-  chrome.storage.local.get([KEY, UI_KEY], r => {
+  chrome.storage.local.get([KEY, UI_KEY, AIRLOCK_CARD_CLOSED_KEY], r => {
     const ui = r[UI_KEY];
     if (ui && typeof ui.left === 'number' && typeof ui.top === 'number') pos = ui;
+    closed = r[AIRLOCK_CARD_CLOSED_KEY] || null;
     cb(airlockNormalize(r[KEY]));
   });
 }
@@ -92,7 +94,6 @@ function enableDrag(el, handle) {
     el.style.right = 'auto';
     el.style.bottom = 'auto';
     el.classList.add('airlock-dragging');
-    el.classList.remove('airlock-pulse');
 
     handle.setPointerCapture(id);
     e.preventDefault();
@@ -137,7 +138,11 @@ function el(tag, cls, text) {
 }
 
 function createBanner(state) {
-  if (dismissed) {                          // ferme par l'utilisateur : on n'insiste pas
+  // Fermee pour ce focus (sur n'importe quel onglet), ou en pause. La
+  // comparaison couvre l'instant ou le focus a change mais ou le service
+  // worker n'a pas encore efface la cle.
+  const isClosed = closed && closed.focus === (state.focus || null);
+  if (isClosed || resting) {
     if (bannerEl) bannerEl.remove();
     bannerEl = null;
     return;
@@ -174,9 +179,13 @@ function createBanner(state) {
   close.title = shortcut ? airlockT('cardHideShortcut', { shortcut }) : airlockT('cardHide');
   close.setAttribute('aria-label', airlockT('cardHideAria'));
   close.addEventListener('click', () => {
-    dismissed = true;
+    closed = { focus: state.focus || null };
+    clearTimeout(cycleTimer);
+    cycleTimer = null;
     card.remove();
     bannerEl = null;
+    // les autres onglets la retirent via chrome.storage.onChanged
+    if (alive()) chrome.storage.local.set({ [AIRLOCK_CARD_CLOSED_KEY]: closed });
   });
   head.appendChild(close);
   card.appendChild(head);
@@ -221,33 +230,43 @@ function createBanner(state) {
   card.appendChild(body);
   document.body.appendChild(card);
 
+  hovered = false;
+  card.addEventListener('pointerenter', () => { hovered = true; });
+  card.addEventListener('pointerleave', () => { hovered = false; });
+
   applyPos(card);
   enableDrag(card, head);
   bannerEl = card;
+
+  // Les 30 s partent de l'apparition de la carte, pas de ses reconstructions
+  // (changement de focus, d'etape, de langue...).
+  if (!cycleTimer) cycleTimer = setTimeout(rest, SHOW_MS);
 }
 
 function refresh() {
   getState(state => createBanner(state));
 }
 
-// ─── pulsation ──────────────────────────────────────────────────────────
+// ─── cycle affichage / pause ────────────────────────────────────────────
 
-function pulse() {
-  if (!bannerEl || dragging) return;
-  if (document.hidden) return;              // inutile sur un onglet en arriere-plan
-  if (reducedMotion.matches) return;
-
-  bannerEl.classList.remove('airlock-pulse');
-  void bannerEl.offsetWidth;                // force le redemarrage de l'animation
-  bannerEl.classList.add('airlock-pulse');
-  setTimeout(() => bannerEl && bannerEl.classList.remove('airlock-pulse'), PULSE_MS);
+function rest() {
+  // jamais retiree pendant qu'on la lit ou qu'on la deplace : on reessaie
+  if (bannerEl && (dragging || hovered)) {
+    cycleTimer = setTimeout(rest, 2000);
+    return;
+  }
+  resting = true;
+  if (bannerEl) bannerEl.remove();
+  bannerEl = null;
+  cycleTimer = setTimeout(show, REST_MS);
 }
 
-// Le calendrier part du chargement de la page, pas de chaque rendu de la carte.
-setTimeout(() => {
-  pulse();
-  setInterval(pulse, PULSE_EVERY);
-}, PULSE_DELAY);
+function show() {
+  cycleTimer = null;
+  resting = false;
+  lastSig = null;                           // force le rendu : la carte a ete retiree
+  refresh();
+}
 
 // ─── raccourci inactif ──────────────────────────────────────────────────
 
@@ -323,6 +342,14 @@ chrome.storage.onChanged.addListener((changes, area) => {
     pos = changes[UI_KEY].newValue;
     if (bannerEl) applyPos(bannerEl);
   }
+  if (changes[AIRLOCK_CARD_CLOSED_KEY]) {
+    closed = changes[AIRLOCK_CARD_CLOSED_KEY].newValue || null;
+    clearTimeout(cycleTimer);               // fermee : plus de cycle ; rouverte : nouveau cycle
+    cycleTimer = null;
+    resting = false;
+    lastSig = null;
+    if (!changes[KEY]) refresh();
+  }
   if (changes[KEY]) createBanner(airlockNormalize(changes[KEY].newValue));
 });
 
@@ -334,9 +361,8 @@ let lastUrl = location.href;
 setInterval(() => {
   if (location.href === lastUrl) return;
   lastUrl = location.href;
-  dismissed = false;                        // nouvelle page, nouveau rappel
-  lastSig = null;
-  refresh();
+  clearTimeout(cycleTimer);                 // nouvelle page, nouveau cycle (sauf si fermee)
+  show();
 }, 1000);
 
 // la fenetre retrecit : la carte doit rester visible

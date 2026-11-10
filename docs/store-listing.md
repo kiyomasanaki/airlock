@@ -2,7 +2,7 @@
 
 Copy to paste into the Store dashboard.
 
-Screenshots for the listing are in [`screenshots/`](screenshots/) (1280×800 PNG).
+Screenshots for the listing are in [`screenshots/`](screenshots/) (1280×800 PNG): `1-capture`, `2-decision`, `3-priorisation`, `4-steps`, `5-reminder`. Upload them in that order.
 
 ---
 
@@ -35,7 +35,7 @@ Paste into the "Detailed description" field. 16,000 characters maximum.
 ```
 You're working. An idea arrives. You dive straight in. Two hours later you realise you dropped something more urgent.
 
-Airlock puts a buffer zone between the impulse and the action.
+Airlock puts a buffer zone between the impulse and the action. It is designed first for people with ADHD: an idea arrives, it feels urgent, and by the time you surface from it, what you were doing is gone.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -59,7 +59,7 @@ When you finish a focus, one click on ✓ archives it and the first queued item 
 
 STUCK ON "WHERE DO I START?"
 
-Break your focus into small, concrete steps, the first one doable in under ten minutes. The next step then shows up under your focus, in the popup, on the icon tooltip and in the reminder card. No AI required; an optional local Claude Code bridge can draft the steps for you.
+Break your focus into small, concrete steps, the first one doable in under ten minutes. The next step then shows up under your focus, in the popup, on the icon tooltip and in the reminder card. No AI required; an optional local Claude Code bridge can draft the steps for you, in your interface language.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -77,9 +77,9 @@ YOUR DATA STAYS PUT
 
 • 100% local storage via chrome.storage.local
 • No server, no account, no sync
-• No data ever leaves your machine
 • No telemetry, no analytics, no tracking, not even "anonymised"
 • Minimal permissions at install; access to other sites is only asked for if you turn on the reminder everywhere
+• One exception, and only if you turn it on yourself: "Generate with Claude" sends the text of a single impulse to Claude Code, installed on your machine under your own account. Never the queue, never the history.
 
 An Options page lets you export your data as JSON at any time, and import it back. Backup stays under your control.
 
@@ -87,7 +87,7 @@ An Options page lets you export your data as JSON at any time, and import it bac
 
 PASSIVE REMINDER: ON CLAUDE.AI, OR EVERYWHERE
 
-Out of sight, out of mind. A discreet, draggable card reminds you of your current focus and its next step. On claude.ai it shows by default, when you open a new conversation, exactly the moment context-switching happens. Turn on "reminder on every site" in the Options page and it follows you to email, social media, video sites: wherever attention actually escapes.
+Out of sight, out of mind. A discreet, draggable card reminds you of your current focus and its next step. On claude.ai it shows by default when you open a new conversation, exactly the moment context-switching happens. Turn on "reminder on every site" in the Options page and it follows you to email, social media, video sites: wherever attention actually escapes.
 
 Dismissible in one click. No page content is ever read.
 
@@ -105,15 +105,24 @@ The decisions stay yours. Airlock only forces you to make one.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
+LANGUAGE
+
+English and French. Airlock follows your browser language by default; you can pick another one at any time in the Options page, and it switches everywhere at once, with no reload.
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+
 SHORTCUT
 
 Ctrl+Shift+E by default (Cmd+Shift+E on Mac), changeable at chrome://extensions/shortcuts. If that combination is already taken on your machine, Chrome does not bind it: Airlock tells you (Options page at install, "!" badge on the icon) and takes you to the right setting. Meanwhile, one click on the icon does the same.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━
 
-Interface in English and French, switchable at any time from the Options page, no reload.
+Open source, MIT licence: https://github.com/kiyomasanaki/airlock
 
-Open source, MIT licence.
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+About the install warning
+If Chrome's Enhanced Safe Browsing is turned on, you may see "This extension is not trusted by Enhanced Safe Browsing". This is about the developer account being new, not about Airlock itself, which has been reviewed and approved by the Chrome Web Store. The message will go away on its own within a few months. You can safely click "Continue to install".
 ```
 
 ---

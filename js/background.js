@@ -56,6 +56,11 @@ chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && (changes[AIRLOCK_KEY] || changes[AIRLOCK_SHORTCUT_DISMISSED_KEY] || changes[AIRLOCK_LANG_KEY])) {
     refreshFromStorage();
   }
+  // A new focus brings the reminder card back on every tab.
+  const c = area === 'local' && changes[AIRLOCK_KEY];
+  if (c && ((c.oldValue && c.oldValue.focus) || null) !== ((c.newValue && c.newValue.focus) || null)) {
+    chrome.storage.local.remove(AIRLOCK_CARD_CLOSED_KEY);
+  }
 });
 
 // ─── optional reminder on every site ────────────────────────────────────
