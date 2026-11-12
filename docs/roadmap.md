@@ -154,6 +154,9 @@ until the next navigation.
   30 seconds, rests for 2 minutes, and comes back, on a loop. It never leaves while the
   pointer is on it or during a drag; the close button hides it on every tab until the
   focus changes
+- While you type in a text field the card covers (input, textarea, rich editor), it
+  steps aside: above the field, otherwise into a free corner (bottom left first). The
+  move is temporary and never saved; the card goes back once the field loses focus
 - Redesigned around a clear hierarchy. The focus text is the dominant element,
   the label sits above it in small caps, and the queue count moved to a separate
   footer chip instead of competing on the same line
