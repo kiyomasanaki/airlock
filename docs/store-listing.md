@@ -2,7 +2,7 @@
 
 Copy to paste into the Store dashboard.
 
-Screenshots for the listing are in [`screenshots/`](screenshots/) (1280×800 PNG): `1-capture`, `2-decision`, `3-priorisation`, `4-steps`, `5-reminder`. Upload them in that order.
+Screenshots for the listing are in `releases/airlock-<version>-screenshots/en/` (1280×800 PNG, `fr/` for French): `1-capture`, `2-decision`, `3-guard`, `4-wide-view`, `5-reminder`. Upload them in that order (the Store takes 5; `6-steps` and `7-languages` are spares). Promo tiles and the 128 px icon are in `store/`.
 
 ---
 

@@ -10,6 +10,7 @@
 </p>
 
 <p align="center">
+  <a href="https://chromewebstore.google.com/detail/airlock-capture-prioritis/cglobkabnahkkfhliljpipdneaijadcl"><img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/v/cglobkabnahkkfhliljpipdneaijadcl?label=Chrome%20Web%20Store&color=1d6cb3"></a>
   <img alt="Manifest V3" src="https://img.shields.io/badge/Chrome-Manifest%20V3-a476ff">
   <img alt="Zero dependencies" src="https://img.shields.io/badge/dependencies-0-ffd84d">
   <img alt="No telemetry" src="https://img.shields.io/badge/telemetry-none-a476ff">
@@ -57,19 +58,27 @@ thing in the world. By the time you surface, what you were doing is gone.
 
 ---
 
-## 🚀 Install (2 min)
+## 🚀 Install
+
+**[Add Airlock from the Chrome Web Store](https://chromewebstore.google.com/detail/airlock-capture-prioritis/cglobkabnahkkfhliljpipdneaijadcl)**, then pin it to the toolbar
+(puzzle icon, then the pin) 📌. Updates arrive on their own.
+
+<details>
+<summary>Run it from source instead (developers)</summary>
 
 1. Clone the repo somewhere stable, e.g. `~/extensions/airlock/`
 2. Open `chrome://extensions/` and turn on **Developer mode** (top right)
 3. Click **Load unpacked** and pick the cloned folder
-4. Pin it to the toolbar (puzzle icon, then the pin) 📌
+4. Pin it to the toolbar (puzzle icon, then the pin)
 
 > [!TIP]
 > **Updating later:** run `git pull` in the folder **already loaded**, then click
 > **Reload** on the extension card. Loading from another path starts with empty storage
-> (your data isn't lost, it just stays with the old path).
+> (your data isn't lost, it just stays with the old path). The Store version and an
+> unpacked copy are two separate extensions with separate storage: use JSON
+> export/import (Options page) to move your data between them.
 
-Not on the Chrome Web Store yet: it runs unpacked for now.
+</details>
 
 ---
 
