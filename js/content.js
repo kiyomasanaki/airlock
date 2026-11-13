@@ -232,13 +232,16 @@ function createBanner(state) {
 
   const card = el('div', 'airlock-banner');
   card.id = 'airlock-banner';
+  // langue et sens d'ecriture sur la carte seulement, jamais sur la page hote
+  card.lang = airlockLang;
+  card.dir = airlockIsRtl() ? 'rtl' : 'ltr';
   card.setAttribute('role', 'complementary');
   card.setAttribute('aria-label', airlockT('cardAria'));
 
   // entete
   const head = el('div', 'airlock-head');
   head.innerHTML = GRIP;
-  head.appendChild(el('p', 'airlock-label', airlockT(hasFocus ? 'currentFocus' : 'cardNoFocus')));
+  head.appendChild(el('p', 'airlock-label', hasFocus ? airlockT('currentFocus') : airlockT('cardNoFocus')));
 
   const close = el('button', 'airlock-close', '×');
   close.type = 'button';
@@ -364,10 +367,12 @@ function showShortcutWarning(bound) {
 
   const box = el('div', 'airlock-warning');
   box.id = 'airlock-shortcut-warning';
+  box.lang = airlockLang;
+  box.dir = airlockIsRtl() ? 'rtl' : 'ltr';
   box.setAttribute('role', 'alert');
 
   const head = el('div', 'airlock-warning-head');
-  head.appendChild(el('p', 'airlock-warning-title', airlockT(bound ? 'warnRebound' : 'warnUnbound')));
+  head.appendChild(el('p', 'airlock-warning-title', bound ? airlockT('warnRebound') : airlockT('warnUnbound')));
   const close = el('button', 'airlock-warning-close', '×');
   close.type = 'button';
   close.setAttribute('aria-label', airlockT('close'));
@@ -376,7 +381,9 @@ function showShortcutWarning(bound) {
   box.appendChild(head);
 
   box.appendChild(el('p', 'airlock-warning-text',
-    airlockT(bound ? 'warnReboundText' : 'warnUnboundText', { suggested: SUGGESTED, bound })));
+    bound
+      ? airlockT('warnReboundText', { suggested: SUGGESTED, bound })
+      : airlockT('warnUnboundText', { suggested: SUGGESTED })));
   box.appendChild(el('p', 'airlock-warning-ok', airlockT('warnOk')));
 
   const open = el('button', 'airlock-warning-btn', airlockT('warnBtn'));

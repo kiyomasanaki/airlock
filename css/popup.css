@@ -45,15 +45,15 @@ body {
 .focus-bar {
   position: relative;
   display: flex; align-items: flex-start; gap: 12px;
-  padding: 14px 14px 14px 16px;
+  padding-block: 14px 14px; padding-inline: 16px 14px;
   margin-bottom: 12px;
   overflow: hidden;
 }
 /* ember edge: the only coloured block of the popup when nothing is pending */
 .focus-bar::before {
   content: "";
-  position: absolute; left: 0; top: 14px; bottom: 14px;
-  width: 3px; border-radius: 0 3px 3px 0;
+  position: absolute; inset-inline-start: 0; top: 14px; bottom: 14px;
+  width: 3px; border-radius: 0; border-start-end-radius: 3px; border-end-end-radius: 3px;
   background: var(--brand-grad);
   transition: opacity .2s;
 }
@@ -183,11 +183,11 @@ body {
 .btn-d {
   display: flex; align-items: center; gap: 11px;
   min-height: 42px;
-  padding: 0 8px 0 16px;
+  padding-block: 0 0; padding-inline: 16px 8px;
   border: 1px solid transparent;
   border-radius: var(--pill);
   font-size: 13.5px; font-weight: 650;
-  text-align: left;
+  text-align: start;
   transition: transform .16s var(--ease), filter .16s, background-color .16s;
 }
 .btn-d svg { width: 17px; height: 17px; flex-shrink: 0; }
@@ -200,7 +200,7 @@ body {
 .btn-d.drop { background: transparent; border-color: var(--line-strong); color: var(--neutral); }
 
 .btn-d .key {
-  margin-left: auto;
+  margin-inline-start: auto;
   min-width: 24px; height: 24px;
   display: grid; place-items: center;
   border-radius: 50%;
@@ -224,7 +224,7 @@ body {
 
 .queue-item {
   display: flex; align-items: center; gap: 10px;
-  padding: 6px 6px 6px 12px;
+  padding-block: 6px 6px; padding-inline: 12px 6px;
   margin-bottom: 5px;
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
@@ -309,3 +309,6 @@ body {
 .footer button:hover { color: var(--text); }
 #btnMethod { color: var(--brand); font-weight: 600; }
 .footer .sep { color: var(--line-strong); }
+
+/* right-to-left languages: arrows point the other way */
+[dir="rtl"] .btn-x.go { transform: scaleX(-1); }

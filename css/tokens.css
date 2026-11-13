@@ -26,7 +26,10 @@
 }
 
 :root {
-  --ff-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* JetBrains Mono only covers Latin: other scripts fall back, glyph by glyph,
+     to the system fonts of --ff-script (set per language below). */
+  --ff-script: system-ui;
+  --ff-mono: "JetBrains Mono", var(--ff-script), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --ff-body: var(--ff-mono);
   --ff-disp: var(--ff-mono);
 
@@ -68,6 +71,21 @@
   --grain-opacity: 0;
   color-scheme: light;
 }
+
+/* System fonts per script, no web font: the bundle stays Latin-only. Set on
+   the root itself so --ff-mono above picks them up. */
+:root:lang(ja) { --ff-script: "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", system-ui; }
+:root:lang(zh-CN) { --ff-script: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", system-ui; }
+:root:lang(ko) { --ff-script: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", "Noto Sans KR", system-ui; }
+:root:lang(hi), :root:lang(mr) { --ff-script: "Nirmala UI", "Kohinoor Devanagari", "Noto Sans Devanagari", system-ui; }
+:root:lang(bn) { --ff-script: "Nirmala UI", "Kohinoor Bangla", "Noto Sans Bengali", system-ui; }
+:root:lang(ta) { --ff-script: "Nirmala UI", "Tamil Sangam MN", "Noto Sans Tamil", system-ui; }
+:root:lang(te) { --ff-script: "Nirmala UI", "Kohinoor Telugu", "Noto Sans Telugu", system-ui; }
+:root:lang(ar) { --ff-script: "Segoe UI", "Geeza Pro", "Noto Naskh Arabic", "Noto Sans Arabic", system-ui; }
+:root:lang(ur) { --ff-script: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Segoe UI", "Noto Naskh Arabic", system-ui; }
+
+/* hidden until the strings of the cached language are loaded (js/i18n.js) */
+html.airlock-i18n-pending body { visibility: hidden; }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -197,7 +215,7 @@ kbd {
 
 .callout {
   border: 1px solid var(--warn-line);
-  border-left-width: 3px;
+  border-inline-start-width: 3px;
   background: var(--warn-soft);
   border-radius: var(--r-sm);
   padding: 12px 14px;

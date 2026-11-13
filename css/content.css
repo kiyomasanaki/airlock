@@ -24,8 +24,28 @@
   --al-ok: #15803d;
   --al-warn: #a35a00;
   --al-shadow: 0 10px 30px rgba(24, 24, 27, .12), 0 1px 3px rgba(24, 24, 27, .08);
-  --al-mono: ui-monospace, SFMono-Regular, "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --al-script: system-ui;
+  --al-mono: ui-monospace, SFMono-Regular, "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, var(--al-script), monospace;
 }
+/* system fonts per script for the languages JetBrains Mono does not cover */
+#airlock-banner:lang(ja) { --al-script: "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", system-ui; }
+#airlock-banner:lang(zh-CN) { --al-script: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", system-ui; }
+#airlock-banner:lang(ko) { --al-script: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", "Noto Sans KR", system-ui; }
+#airlock-banner:lang(hi), #airlock-banner:lang(mr) { --al-script: "Nirmala UI", "Kohinoor Devanagari", "Noto Sans Devanagari", system-ui; }
+#airlock-banner:lang(bn) { --al-script: "Nirmala UI", "Kohinoor Bangla", "Noto Sans Bengali", system-ui; }
+#airlock-banner:lang(ta) { --al-script: "Nirmala UI", "Tamil Sangam MN", "Noto Sans Tamil", system-ui; }
+#airlock-banner:lang(te) { --al-script: "Nirmala UI", "Kohinoor Telugu", "Noto Sans Telugu", system-ui; }
+#airlock-banner:lang(ar) { --al-script: "Segoe UI", "Geeza Pro", "Noto Naskh Arabic", "Noto Sans Arabic", system-ui; }
+#airlock-banner:lang(ur) { --al-script: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Segoe UI", "Noto Naskh Arabic", system-ui; }
+#airlock-shortcut-warning:lang(ja) { --al-script: "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", system-ui; }
+#airlock-shortcut-warning:lang(zh-CN) { --al-script: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", system-ui; }
+#airlock-shortcut-warning:lang(ko) { --al-script: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", "Noto Sans KR", system-ui; }
+#airlock-shortcut-warning:lang(hi), #airlock-shortcut-warning:lang(mr) { --al-script: "Nirmala UI", "Kohinoor Devanagari", "Noto Sans Devanagari", system-ui; }
+#airlock-shortcut-warning:lang(bn) { --al-script: "Nirmala UI", "Kohinoor Bangla", "Noto Sans Bengali", system-ui; }
+#airlock-shortcut-warning:lang(ta) { --al-script: "Nirmala UI", "Tamil Sangam MN", "Noto Sans Tamil", system-ui; }
+#airlock-shortcut-warning:lang(te) { --al-script: "Nirmala UI", "Kohinoor Telugu", "Noto Sans Telugu", system-ui; }
+#airlock-shortcut-warning:lang(ar) { --al-script: "Segoe UI", "Geeza Pro", "Noto Naskh Arabic", "Noto Sans Arabic", system-ui; }
+#airlock-shortcut-warning:lang(ur) { --al-script: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Segoe UI", "Noto Naskh Arabic", system-ui; }
 @media (prefers-color-scheme: dark) {
   #airlock-banner, #airlock-shortcut-warning {
     --al-bg: #121215;
@@ -72,7 +92,7 @@
   line-height: 1.5;
   letter-spacing: normal;
   color: var(--al-text);
-  text-align: left;
+  text-align: start;
   -webkit-font-smoothing: antialiased;
 
   animation: airlockIn 0.28s cubic-bezier(.2, .7, .2, 1);
@@ -81,9 +101,9 @@
 #airlock-banner.airlock-banner::before {
   content: "";
   position: absolute;
-  left: 0; top: 16px; bottom: 16px;
+  inset-inline-start: 0; top: 16px; bottom: 16px;
   width: 3px;
-  border-radius: 0 3px 3px 0;
+  border-radius: 0; border-start-end-radius: 3px; border-end-end-radius: 3px;
   background: var(--al-brand-grad);
 }
 #airlock-banner *, #airlock-shortcut-warning * { box-sizing: border-box; }
@@ -105,7 +125,7 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 12px 10px 0 18px;
+  padding-block: 12px 0; padding-inline: 18px 10px;
   cursor: grab;
   touch-action: none;           /* required for touch dragging */
   user-select: none;
@@ -157,7 +177,7 @@
 
 /* ─── body ───────────────────────────────────────────────────────────── */
 
-#airlock-banner .airlock-body { padding: 6px 16px 14px 18px; }
+#airlock-banner .airlock-body { padding-block: 6px 14px; padding-inline: 18px 16px; }
 
 /* the central element: the focus must dominate */
 #airlock-banner .airlock-focus {
@@ -199,7 +219,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin: 10px 0 0 17px;
+  margin-block: 10px 0; margin-inline: 17px 0;
   padding: 8px 11px;
   border: 1px solid var(--al-brand-line);
   border-radius: 11px;
@@ -287,7 +307,7 @@
   width: 330px;
   max-width: calc(100vw - 32px);
   margin: 0;
-  padding: 12px 12px 15px 18px;
+  padding-block: 12px 15px; padding-inline: 18px 12px;
 
   background: var(--al-bg);
   border: 1px solid var(--al-line);
@@ -299,15 +319,15 @@
   font-size: 13px;
   line-height: 1.5;
   color: var(--al-text);
-  text-align: left;
+  text-align: start;
   animation: airlockIn 0.28s cubic-bezier(.2, .7, .2, 1);
 }
 #airlock-shortcut-warning.airlock-warning::before {
   content: "";
   position: absolute;
-  left: 0; top: 14px; bottom: 14px;
+  inset-inline-start: 0; top: 14px; bottom: 14px;
   width: 3px;
-  border-radius: 0 3px 3px 0;
+  border-radius: 0; border-start-end-radius: 3px; border-end-end-radius: 3px;
   background: var(--al-warn);
 }
 
@@ -358,3 +378,8 @@
   #airlock-banner.airlock-banner { animation: none; }
   #airlock-shortcut-warning.airlock-warning { animation: none; }
 }
+
+/* Right-to-left languages (ar, ur): mirrored default corner. Physical values on
+   purpose: logical insets could resolve against the host page's direction. */
+#airlock-banner.airlock-banner[dir="rtl"],
+#airlock-shortcut-warning.airlock-warning[dir="rtl"] { right: auto; left: 22px; }

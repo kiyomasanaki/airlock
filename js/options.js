@@ -128,6 +128,15 @@ $('btnEverywhere').onclick = () => {
 
 // ─── language ───────────────────────────────────────────────────────────
 
+// One option per language, each written in its own language.
+for (const [code, meta] of Object.entries(AIRLOCK_LANG_META)) {
+  const o = document.createElement('option');
+  o.value = code;
+  o.lang = code;
+  o.textContent = meta.native;
+  $('selLang').appendChild(o);
+}
+
 // Stored as chosen ('auto' included): the resolved language is recomputed by
 // every surface, so 'auto' keeps following the browser.
 function renderLang() {
