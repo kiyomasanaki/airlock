@@ -79,6 +79,39 @@ footer a:hover { color: var(--foreground); }
   main { padding-top: 64px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* translation fixes page */
+.tr-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 24px 0 8px; }
+.tr-tools select, .tr-tools button { font: inherit; font-size: .875rem; color: var(--foreground); background: var(--card);
+  border: 1px solid var(--border); border-radius: .625rem; padding: 8px 12px; cursor: pointer; }
+.tr-tools button.primary { background: var(--accent); border-color: var(--accent); color: var(--background); font-weight: 600; }
+.tr-tools button:disabled { opacity: .45; cursor: not-allowed; }
+.tr-count { font-size: .875rem; color: var(--muted); }
+.tr-note { font-size: .8125rem; color: var(--muted); min-height: 1.2em; }
+.tr-list { list-style: none; margin-top: 16px; border-top: 1px solid var(--border); }
+.tr-row { padding: 14px 0; border-bottom: 1px solid var(--border); display: grid; gap: 6px; }
+.tr-row.changed .tr-input { border-color: var(--accent); }
+.tr-row.changed .tr-key::after { content: " · edited"; color: var(--accent); }
+.tr-key { font-size: .75rem; color: var(--muted); overflow-wrap: anywhere; }
+.tr-en { font-size: .875rem; color: color-mix(in srgb, var(--foreground) 70%, transparent); white-space: pre-wrap; overflow-wrap: anywhere; }
+.tr-input { width: 100%; font: inherit; font-size: .9375rem; line-height: 1.5; color: var(--foreground); background: var(--card);
+  border: 1px solid var(--border); border-radius: .5rem; padding: 8px 10px; resize: vertical; }
+.tr-input:focus { outline: 2px solid var(--accent-soft); outline-offset: 0; }
+
+/* scripts JetBrains Mono does not cover: system fonts, no web font */
+:lang(ja) { --script: "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP"; }
+:lang(zh-CN) { --script: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC"; }
+:lang(ko) { --script: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", "Noto Sans KR"; }
+:lang(hi), :lang(mr) { --script: "Nirmala UI", "Kohinoor Devanagari", "Noto Sans Devanagari"; }
+:lang(bn) { --script: "Nirmala UI", "Kohinoor Bangla", "Noto Sans Bengali"; }
+:lang(ta) { --script: "Nirmala UI", "Tamil Sangam MN", "Noto Sans Tamil"; }
+:lang(te) { --script: "Nirmala UI", "Kohinoor Telugu", "Noto Sans Telugu"; }
+:lang(ar) { --script: "Segoe UI", "Geeza Pro", "Noto Naskh Arabic", "Noto Sans Arabic"; }
+:lang(ur) { --script: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Segoe UI", "Noto Naskh Arabic"; }
+.tr-input:lang(ja), .tr-input:lang(zh-CN), .tr-input:lang(ko), .tr-input:lang(hi), .tr-input:lang(mr), .tr-input:lang(bn),
+.tr-input:lang(ta), .tr-input:lang(te), .tr-input:lang(ar), .tr-input:lang(ur), option:lang(ja), option:lang(zh-CN),
+option:lang(ko), option:lang(hi), option:lang(mr), option:lang(bn), option:lang(ta), option:lang(te), option:lang(ar),
+option:lang(ur) { font-family: "JetBrains Mono", var(--script), system-ui, sans-serif; }
 </style>
 </head>
 <body>
@@ -86,6 +119,7 @@ footer a:hover { color: var(--foreground); }
 <li><a href="index.html" aria-current="page">Home</a></li>
 <li><a href="privacy-policy.html">Privacy</a></li>
 <li><a href="legal-notice.html">Legal notice</a></li>
+<li><a href="translate.html">Translations</a></li>
 </ul></nav>
 <main class="home">
 <h1>Airlock</h1>
@@ -100,6 +134,7 @@ shortcut instead of diving into it, then decide: switch, queue or drop.</p>
 <ul class="list">
 <li><a href="privacy-policy.html"><span class="t">Privacy policy</span><span class="d">What Airlock stores, and what never leaves your machine.</span></a></li>
 <li><a href="legal-notice.html"><span class="t">Legal notice</span><span class="d">Publisher, hosting, licence.</span></a></li>
+<li><a href="translate.html"><span class="t">Translations</span><span class="d">Correct the interface in your language, line by line.</span></a></li>
 </ul>
 </main>
 <footer><div><span>Airlock · MIT licence</span>
