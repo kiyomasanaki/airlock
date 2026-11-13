@@ -126,6 +126,69 @@ $('btnEverywhere').onclick = () => {
   });
 };
 
+// ─── focus guard ────────────────────────────────────────────────────────
+
+function renderGuard() {
+  chrome.storage.local.get([AIRLOCK_GUARD_KEY], r => {
+    const g = airlockGuardSettings(r[AIRLOCK_GUARD_KEY]);
+    $('guardState').textContent = airlockT(g.enabled ? 'optOn' : 'optOff');
+    $('guardState').className = 'pill ' + (g.enabled ? 'on' : 'off');
+    $('btnGuard').textContent = airlockT(g.enabled ? 'optGuardDisable' : 'optGuardEnable');
+    $('selGuardSens').value = g.sensitivity;
+    // a plain count, no judgement: the guard is a help, not a score
+    $('guardBypass').textContent = g.bypasses ? airlockT('optGuardBypass', g.bypasses) : airlockT('optGuardBypassNone');
+    $('btnGuardBypassReset').hidden = !g.bypasses;
+  });
+  renderGuardModel();
+}
+
+const GUARD_MODEL_STATE_KEYS = {
+  available: 'optGuardStateAvailable', downloadable: 'optGuardStateDownloadable',
+  downloading: 'optGuardStateDownloading', unavailable: 'optGuardStateUnavailable',
+  unsupported: 'optGuardStateUnsupported',
+};
+
+async function renderGuardModel() {
+  const st = await airlockGuardModelState();
+  $('guardModel').textContent = airlockT('optGuardModel', { state: airlockT(GUARD_MODEL_STATE_KEYS[st] || 'optGuardStateUnavailable') });
+  $('guardDlRow').hidden = st !== 'downloadable';
+  if (st !== 'downloadable') $('guardDlInfo').hidden = true;
+}
+
+function updateGuard(fn) {
+  chrome.storage.local.get([AIRLOCK_GUARD_KEY], r => {
+    const g = airlockGuardSettings(r[AIRLOCK_GUARD_KEY]);
+    fn(g);
+    chrome.storage.local.set({ [AIRLOCK_GUARD_KEY]: g });
+  });
+}
+
+$('btnGuard').onclick = () => updateGuard(g => { g.enabled = !g.enabled; });
+$('selGuardSens').addEventListener('change', e => updateGuard(g => { g.sensitivity = e.target.value; }));
+$('btnGuardBypassReset').onclick = () => updateGuard(g => { g.bypasses = 0; });
+
+// First click only explains (optional, several GB, ~22 GB free); the download
+// starts on the confirmation click, which also provides the user activation.
+$('btnGuardDl').onclick = () => { $('guardDlInfo').hidden = false; $('guardDlRow').hidden = true; };
+$('btnGuardDlCancel').onclick = () => { $('guardDlInfo').hidden = true; renderGuardModel(); };
+$('btnGuardDlGo').onclick = () => {
+  $('guardDlInfo').hidden = true;
+  $('guardStatus').className = 'status';
+  airlockGuardDownload(p => {
+    $('guardStatus').textContent = airlockT('optGuardDlProgress', { pct: Math.round(p * 100) });
+  }).then(() => {
+    showStatus('guardStatus', airlockT('optGuardDlDone'), true);
+    renderGuardModel();
+  }).catch(e => {
+    showStatus('guardStatus', airlockT('optGuardDlFail', { err: e && e.message ? e.message : String(e) }), false);
+    renderGuardModel();
+  });
+};
+
+// ─── about ──────────────────────────────────────────────────────────────
+
+$('btnAbout').onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL('pages/about.html') });
+
 // ─── language ───────────────────────────────────────────────────────────
 
 // One option per language, each written in its own language.
@@ -237,9 +300,11 @@ airlockI18nInit(() => {
   loadState(state => renderDone(state.done));
   renderShortcut();
   renderEverywhere();
+  renderGuard();
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes[AIRLOCK_GUARD_KEY]) renderGuard();
   if (area === 'local' && changes[AIRLOCK_KEY]) {
     renderDone(airlockNormalize(changes[AIRLOCK_KEY].newValue).done);
   }

@@ -20,6 +20,20 @@ const AIRLOCK_SHORTCUT_DISMISSED_KEY = 'shortcutWarningDismissed';
 // card). Hidden on every tab while that focus stays; the service worker drops the
 // key when the focus changes. UI state as well, never exported.
 const AIRLOCK_CARD_CLOSED_KEY = 'airlock_card_closed';
+// Focus guard settings (js/guard.js): { enabled, sensitivity, bypasses }. A UI
+// preference too, never exported. `bypasses` counts "switch anyway" answers and
+// is only ever shown, neutrally, on the Options page.
+const AIRLOCK_GUARD_KEY = 'airlock_guard';
+const AIRLOCK_GUARD_SENSITIVITIES = ['high', 'medium', 'low'];
+
+function airlockGuardSettings(raw) {
+  const r = raw && typeof raw === 'object' ? raw : {};
+  return {
+    enabled: r.enabled !== false,
+    sensitivity: AIRLOCK_GUARD_SENSITIVITIES.includes(r.sensitivity) ? r.sensitivity : 'medium',
+    bypasses: Number.isInteger(r.bypasses) && r.bypasses > 0 ? r.bypasses : 0,
+  };
+}
 
 function airlockBlank() {
   return { focus: null, queue: [], done: [], pending: null, methodologies: {} };
@@ -69,6 +83,13 @@ function airlockNextStep(state, text) {
   if (!m || !Array.isArray(m.steps)) return null;
   const step = m.steps.find(st => !st.done);
   return step ? step.text : null;
+}
+
+// "Done but still the focus" only exists through steps: the focus counts as
+// finished when it has steps and every one of them is ticked.
+function airlockFocusFinished(state) {
+  const m = state.focus && state.methodologies && state.methodologies[state.focus];
+  return !!(m && Array.isArray(m.steps) && m.steps.length && m.steps.every(st => st.done));
 }
 
 // Read-modify-write on fresh storage, so two open surfaces never overwrite
