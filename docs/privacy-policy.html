@@ -121,7 +121,7 @@ option:lang(ur) { font-family: "JetBrains Mono", var(--script), system-ui, sans-
 <li><a href="legal-notice.html">Legal notice</a></li>
 <li><a href="translate.html">Translations</a></li>
 </ul></nav>
-<main><h1>Privacy Policy</h1><p class="updated"><strong>Last updated: November 3, 2026</strong></p>
+<main><h1>Privacy Policy</h1><p class="updated"><strong>Last updated: November 13, 2026</strong></p>
 <div class="prose">
 <h2>Summary</h2>
 <p>Airlock stores everything locally. <strong>We operate no server, collect nothing, and have no access to your data.</strong> All information you enter (impulses, focus items, completed tasks) is stored exclusively in your browser's local storage on your machine.</p>
@@ -132,7 +132,8 @@ option:lang(ur) { font-family: "JetBrains Mono", var(--script), system-ui, sans-
 <li>Text you type as "impulses", "focus", or queue items</li>
 <li>Timestamps of when items are created and completed</li>
 <li>Generated methodologies and which of their steps you have ticked off</li>
-<li>Your preferences (keyboard shortcut, display options, interface language)</li>
+<li>Your preferences (keyboard shortcut, display options, interface language, focus guard settings)</li>
+<li>How many times you chose "switch anyway" past the focus guard (a plain local count, shown only to you on the Options page)</li>
 </ul>
 <p>This data is stored using the Chrome <code>storage.local</code> API and remains on your computer. It is never transmitted to us or to any server we control: we have none.</p>
 <h2>Methodology generation (optional)</h2>
@@ -151,6 +152,20 @@ option:lang(ur) { font-family: "JetBrains Mono", var(--script), system-ui, sans-
 <li>If you do not install the native host, this feature is inert and no network call is ever made</li>
 </ul>
 <p>If you want the extension to stay strictly local, simply do not install the native host.</p>
+<h2>Focus guard (local only)</h2>
+<p>When you switch away from a focus that is not done, Airlock may first check whether the new idea is the same subject as your focus. That check runs <strong>entirely on your machine</strong>:</p>
+<ul>
+<li>with Chrome's built-in on-device model (Gemini Nano, through Chrome's Prompt API) and its on-device language detector, only if your computer supports them and you downloaded them yourself from the Options page;</li>
+<li>otherwise with a simple word comparison done by the extension.</li>
+</ul>
+<p>Nothing is sent to us, to Google or to anyone else: Chrome runs these models locally, and the extension never makes a network call for this feature. The texts compared are only your current focus and the new idea. You can turn the guard off on the Options page.</p>
+<h2>Translation fixes page (website)</h2>
+<p>The project website has a page where anyone can suggest better translations of the interface: <a href="https://kiyomasanaki.github.io/airlock/translate.html">https://kiyomasanaki.github.io/airlock/translate.html</a>. It is a page of the website, not part of the extension, and the extension never sends anything to it.</p>
+<ul>
+<li>What you type there stays in your browser (its local storage) while you edit</li>
+<li>Nothing is sent unless you choose to: the "Open a GitHub issue" button opens GitHub with your corrections pre-filled, and you decide whether to submit them from your own GitHub account. "Copy" only puts the text in your clipboard</li>
+<li>Anything you submit on GitHub is public and subject to GitHub's privacy statement: <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement</a></li>
+</ul>
 <h2>Data we do NOT collect</h2>
 <ul>
 <li>We do not collect personally identifiable information (PII)</li>

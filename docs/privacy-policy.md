@@ -1,6 +1,6 @@
 # Privacy Policy - Airlock Extension
 
-**Last updated: November 3, 2026**
+**Last updated: November 13, 2026**
 
 ## Summary
 
@@ -15,7 +15,8 @@ We do NOT collect any data. The extension stores the following information local
 - Text you type as "impulses", "focus", or queue items
 - Timestamps of when items are created and completed
 - Generated methodologies and which of their steps you have ticked off
-- Your preferences (keyboard shortcut, display options, interface language)
+- Your preferences (keyboard shortcut, display options, interface language, focus guard settings)
+- How many times you chose "switch anyway" past the focus guard (a plain local count, shown only to you on the Options page)
 
 This data is stored using the Chrome `storage.local` API and remains on your computer. It is never transmitted to us or to any server we control: we have none.
 
@@ -37,6 +38,23 @@ What this means concretely:
 - If you do not install the native host, this feature is inert and no network call is ever made
 
 If you want the extension to stay strictly local, simply do not install the native host.
+
+## Focus guard (local only)
+
+When you switch away from a focus that is not done, Airlock may first check whether the new idea is the same subject as your focus. That check runs **entirely on your machine**:
+
+- with Chrome's built-in on-device model (Gemini Nano, through Chrome's Prompt API) and its on-device language detector, only if your computer supports them and you downloaded them yourself from the Options page;
+- otherwise with a simple word comparison done by the extension.
+
+Nothing is sent to us, to Google or to anyone else: Chrome runs these models locally, and the extension never makes a network call for this feature. The texts compared are only your current focus and the new idea. You can turn the guard off on the Options page.
+
+## Translation fixes page (website)
+
+The project website has a page where anyone can suggest better translations of the interface: <https://kiyomasanaki.github.io/airlock/translate.html>. It is a page of the website, not part of the extension, and the extension never sends anything to it.
+
+- What you type there stays in your browser (its local storage) while you edit
+- Nothing is sent unless you choose to: the "Open a GitHub issue" button opens GitHub with your corrections pre-filled, and you decide whether to submit them from your own GitHub account. "Copy" only puts the text in your clipboard
+- Anything you submit on GitHub is public and subject to GitHub's privacy statement: <https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement>
 
 ## Data we do NOT collect
 

@@ -79,6 +79,14 @@ daily workflow.
   ADHD: one focal point per screen (the focus and its next step), fixed colour meanings
   (switch = violet, queue = teal, drop = neutral, never red), no looping animation,
   contrast checked AA in light and dark
+- **20 languages** *(done in 2.0.0)*: English, Simplified Chinese, Hindi, Spanish,
+  French, Arabic, Bengali, Brazilian Portuguese, Russian, Urdu, Indonesian, German,
+  Japanese, Swahili, Marathi, Telugu, Turkish, Tamil, Vietnamese, Korean. Written once
+  in `js/locales/<code>.js` (no translation at runtime), one file loaded per page,
+  right-to-left layout for Arabic and Urdu, system fonts per script. A flag picker in
+  the popup unfolds below the app. The translations are machine-made: the website has a
+  page to correct them line by line (`docs/translate.html`), linked from the credits
+- **Credits page** *(done in 2.0.0)*: version, author, the vision, third-party licences
 
 **Exit condition:** all of the above is ready and the extension has been used
 throughout Phase 1 with no blocking bug encountered.
@@ -224,6 +232,13 @@ problem actually experienced during Phase 1.
 - **Search** across captured items
 - ~~**Themes** (light/dark auto, based on `prefers-color-scheme`)~~: done in the popup
 - **Optional notifications**: a reminder when a focus has been idle for a long time
+- **Wide view** *(done in 2.0.0)*: the popup shows the first ten queued ideas, the
+  rest opens in a full-screen tab with the whole of Airlock, kept in sync
+- **Focus guard** *(done in 2.0.0)*: switching away from an unfinished focus (switch
+  answer, or → on a queued idea) first asks whether it is done; "not yet" suggests
+  parking the new idea, with a quieter "switch anyway". The question is skipped only
+  when the new idea is clearly the same subject, judged on the machine (Chrome's
+  local model when available, else word overlap). Never on capture. Can be turned off
 
 **Exit condition:** one or two features added, validated by usage, without inflating
 the UI to the point of losing the simplicity of the airlock.
