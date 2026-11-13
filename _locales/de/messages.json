@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - Erfassen & priorisieren"
+  },
+  "description": {
+    "message": "Eine Schleuse zwischen Impuls und Handlung. Erfasse die Idee, statt dich hineinzustürzen. Globales Kürzel Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "Die Erfassungsschleuse öffnen"
+  }
+}

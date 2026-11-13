@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - 捕捉と優先順位付け"
+  },
+  "description": {
+    "message": "衝動と行動の間に設けるエアロック。アイデアに飛び込む代わりに、まず記録しましょう。グローバルショートカット Ctrl+Shift+E。"
+  },
+  "commandDescription": {
+    "message": "捕捉エアロックを開く"
+  }
+}

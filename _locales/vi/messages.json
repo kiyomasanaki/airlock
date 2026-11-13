@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - Ghi lại và sắp xếp ưu tiên"
+  },
+  "description": {
+    "message": "Vùng đệm giữa ý tưởng và hành động. Ghi lại ý tưởng thay vì lao vào nó ngay. Phím tắt toàn cục Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "Mở vùng đệm ghi lại ý tưởng"
+  }
+}

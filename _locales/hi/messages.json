@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - कैद करें और प्राथमिकता दें"
+  },
+  "description": {
+    "message": "Airlock: विचार और काम के बीच की एक जगह। कूदने के बजाय विचार को कैद करें। ग्लोबल शॉर्टकट Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "कैद करने वाला Airlock खोलें"
+  }
+}

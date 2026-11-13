@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock: تسجيل وترتيب الأولويات"
+  },
+  "description": {
+    "message": "حاجز بين الفكرة والفعل. سجّل الفكرة بدلاً من الانغماس فيها فورًا. الاختصار العام Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "فتح نافذة Airlock لتسجيل الفكرة"
+  }
+}
