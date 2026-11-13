@@ -6,7 +6,7 @@ Markdown the legal documents use: headings, paragraphs, "-" lists, bold,
 italics, inline code, [links](url), <autolinks> and bare URLs.
 
 Look: the wqqz.dev Astro theme (MIT, github.com/imwqqz/wqqz.dev), the same one
-the extension uses: zinc greys, JetBrains Mono for all text, one violet accent,
+the extension uses: zinc greys, JetBrains Mono for all text, one blue accent,
 centred text nav, a single 48rem column, bracketed contact links. Light or dark
 follows the system. The font is served from docs/fonts, no third-party request.
 
@@ -36,10 +36,10 @@ CSS = """
 @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800;
   font-display: swap; src: url(fonts/jetbrains-mono-latin-wght.woff2) format("woff2"); }
 :root { --background: #fbfcfd; --foreground: #18181b; --muted: #606067; --card: #ffffff;
-  --border: #e4e4e7; --accent: #7945df; --accent-soft: rgba(121, 69, 223, .5); color-scheme: light; }
+  --border: #e4e4e7; --accent: #1d6cb3; --accent-soft: rgba(29, 108, 179, .5); color-scheme: light; }
 @media (prefers-color-scheme: dark) {
   :root { --background: #0a0a0c; --foreground: #e4e4e7; --muted: #8e8e96; --card: #121215;
-    --border: #262629; --accent: #a889ff; --accent-soft: rgba(168, 137, 255, .5); color-scheme: dark; }
+    --border: #262629; --accent: #4497da; --accent-soft: rgba(68, 151, 218, .5); color-scheme: dark; }
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 80px; }

@@ -77,7 +77,7 @@ daily workflow.
   popup, Options, steps page, reminder card and website, based on the wqqz.dev theme
   (`css/tokens.css`, JetBrains Mono bundled in `fonts/`, no network call). Built for
   ADHD: one focal point per screen (the focus and its next step), fixed colour meanings
-  (switch = violet, queue = teal, drop = neutral, never red), no looping animation,
+  (switch = blue, queue = teal, drop = neutral, never red), no looping animation,
   contrast checked AA in light and dark
 - **20 languages** *(done in 2.0.0)*: English, Simplified Chinese, Hindi, Spanish,
   French, Arabic, Bengali, Brazilian Portuguese, Russian, Urdu, Indonesian, German,
