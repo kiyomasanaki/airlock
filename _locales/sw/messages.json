@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock: Nasa na Kuweka Vipaumbele"
+  },
+  "description": {
+    "message": "Kizuizi cha hewa kati ya wazo na kitendo. Nasa wazo badala ya kuzama ndani yake papo hapo. Mkato wa jumla Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "Fungua kizuizi cha kunasa"
+  }
+}

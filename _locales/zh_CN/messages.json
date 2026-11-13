@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - 捕捉与优先排序"
+  },
+  "description": {
+    "message": "在冲动与行动之间架起一个气闸。捕捉念头，而不是直接投入其中。全局快捷键 Ctrl+Shift+E。"
+  },
+  "commandDescription": {
+    "message": "打开捕捉气闸"
+  }
+}

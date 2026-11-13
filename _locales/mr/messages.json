@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - कल्पना टिपा, प्राधान्य ठरवा"
+  },
+  "description": {
+    "message": "कल्पना आणि कृतीच्या मध्ये Airlock. उडी मारण्याआधी कल्पना टिपून घे. ग्लोबल शॉर्टकट Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "टिपण्यासाठीचा Airlock उघडा"
+  }
+}

@@ -39,21 +39,49 @@ body {
 .theme-toggle .sun { display: none; }
 :root[data-theme="dark"] .theme-toggle .sun { display: block; }
 :root[data-theme="dark"] .theme-toggle .moon { display: none; }
+.topbar-btns { display: flex; gap: 6px; }
+
+/* ─── language picker ────────────────────────────────────────────────── */
+
+.lang-toggle { overflow: hidden; padding: 0; }
+.lang-toggle .flag { width: 18px; height: 13.5px; border-radius: 2px; display: block; }
+.lang-toggle[aria-expanded="true"] { border-color: var(--brand); }
+
+/* The popup tops out at 600 px: past that the panel scrolls on its own
+   (max-height set by js/popup.js when it opens). */
+.lang-panel { margin-top: 14px; overflow-y: auto; overscroll-behavior: contain; }
+.lang-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 2px; }
+.lang-opt {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 8px 4px 7px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 10.5px; line-height: 1.25; text-align: center;
+  overflow-wrap: anywhere;
+}
+.lang-opt img { width: 28px; height: 21px; border-radius: 3px; box-shadow: 0 0 0 1px var(--line); }
+.lang-opt:hover { border-color: var(--line-strong); color: var(--text); }
+.lang-opt[aria-pressed="true"] {
+  border-color: var(--brand); background: var(--brand-soft);
+  color: var(--text); font-weight: 700;
+}
 
 /* ─── focus: the hero ────────────────────────────────────────────────── */
 
 .focus-bar {
   position: relative;
   display: flex; align-items: flex-start; gap: 12px;
-  padding: 14px 14px 14px 16px;
+  padding-block: 14px 14px; padding-inline: 16px 14px;
   margin-bottom: 12px;
   overflow: hidden;
 }
 /* ember edge: the only coloured block of the popup when nothing is pending */
 .focus-bar::before {
   content: "";
-  position: absolute; left: 0; top: 14px; bottom: 14px;
-  width: 3px; border-radius: 0 3px 3px 0;
+  position: absolute; inset-inline-start: 0; top: 14px; bottom: 14px;
+  width: 3px; border-radius: 0; border-start-end-radius: 3px; border-end-end-radius: 3px;
   background: var(--brand-grad);
   transition: opacity .2s;
 }
@@ -165,6 +193,7 @@ body {
 
 .decision { display: none; margin-top: 10px; padding: 14px; }
 .decision.visible { display: block; }
+.decision.visible.guarded { display: none; }
 
 .decision-q { margin-bottom: 12px; font-size: 13px; line-height: 1.4; }
 .decision-q b {
@@ -183,11 +212,11 @@ body {
 .btn-d {
   display: flex; align-items: center; gap: 11px;
   min-height: 42px;
-  padding: 0 8px 0 16px;
+  padding-block: 0 0; padding-inline: 16px 8px;
   border: 1px solid transparent;
   border-radius: var(--pill);
   font-size: 13.5px; font-weight: 650;
-  text-align: left;
+  text-align: start;
   transition: transform .16s var(--ease), filter .16s, background-color .16s;
 }
 .btn-d svg { width: 17px; height: 17px; flex-shrink: 0; }
@@ -198,9 +227,25 @@ body {
 .btn-d.switch:hover { filter: brightness(1.05); }
 .btn-d.queue { background: var(--queue-soft); border-color: var(--queue-line); color: var(--queue); }
 .btn-d.drop { background: transparent; border-color: var(--line-strong); color: var(--neutral); }
+.btn-d.yes { background: color-mix(in srgb, var(--ok) 12%, transparent); border-color: color-mix(in srgb, var(--ok) 45%, transparent); color: var(--ok); }
+
+/* ─── focus guard ────────────────────────────────────────────────────── */
+
+.guard { margin-top: 10px; padding: 14px; }
+.guard[hidden], .guard .decision-btns[hidden] { display: none; }
+.guard.checking .decision-q { color: var(--text-3); }
+.guard .hint { margin-top: 8px; }
+/* the way out exists, but quieter than the two suggested answers */
+.guard-anyway {
+  align-self: center; margin-top: 2px; padding: 4px 6px;
+  border: none; background: none;
+  font-family: var(--ff-body); font-size: 11px; color: var(--text-3);
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong);
+}
+.guard-anyway:hover { color: var(--text-2); }
 
 .btn-d .key {
-  margin-left: auto;
+  margin-inline-start: auto;
   min-width: 24px; height: 24px;
   display: grid; place-items: center;
   border-radius: 50%;
@@ -224,7 +269,7 @@ body {
 
 .queue-item {
   display: flex; align-items: center; gap: 10px;
-  padding: 6px 6px 6px 12px;
+  padding-block: 6px 6px; padding-inline: 12px 6px;
   margin-bottom: 5px;
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
@@ -293,6 +338,7 @@ body {
 
 .footer {
   display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 4px 12px;
   margin-top: 16px; padding-top: 10px;
   border-top: 1px solid var(--line);
   font-family: var(--ff-mono);
@@ -308,4 +354,18 @@ body {
 }
 .footer button:hover { color: var(--text); }
 #btnMethod { color: var(--brand); font-weight: 600; }
+body[data-view="wide"] .wide-only-hide { display: none; }
+
+/* past ten queued ideas, the rest is one click away in the wide view */
+.queue-more {
+  display: block; width: 100%; margin-top: 6px; padding: 8px 10px;
+  border: 1px dashed var(--line-strong); border-radius: var(--r-sm);
+  background: none; color: var(--text-2);
+  font-family: var(--ff-body); font-size: 11.5px; font-weight: 600; text-align: center;
+}
+.queue-more:hover { color: var(--text); border-color: var(--brand-line); }
+.queue-more[hidden] { display: none; }
 .footer .sep { color: var(--line-strong); }
+
+/* right-to-left languages: arrows point the other way */
+[dir="rtl"] .btn-x.go { transform: scaleX(-1); }

@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - ধরে রাখো আর অগ্রাধিকার দাও"
+  },
+  "description": {
+    "message": "ভাবনা আর কাজের মাঝে Airlock। ঝাঁপ দেওয়ার বদলে ভাবনাটা ধরে রাখো। গ্লোবাল শর্টকাট Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "ধরে রাখার Airlock খোলো"
+  }
+}

@@ -30,6 +30,8 @@ let resting = false;                // en pause entre deux affichages
 let cycleTimer = null;              // prochaine bascule affichage / pause
 let hovered = false;                // pointeur sur la carte
 let shortcut = '';                  // raccourci reellement assigne, '' si aucun
+let dodgeField = null;              // champ de saisie que la carte doit laisser libre
+let dodged = false;                 // carte ecartee de ce champ, hors de sa place
 
 // ─── etat ───────────────────────────────────────────────────────────────
 
@@ -66,14 +68,76 @@ function clamp(left, top, el) {
   };
 }
 
-function applyPos(el) {
-  if (!pos) return;                 // jamais deplacee : le CSS ancre en bas a droite
-  const p = clamp(pos.left, pos.top, el);
+function setPos(el, p) {
   el.style.left = p.left + 'px';
   el.style.top = p.top + 'px';
   el.style.right = 'auto';
   el.style.bottom = 'auto';
 }
+
+function applyPos(el) {
+  dodged = false;
+  if (!pos) {                       // jamais deplacee : le CSS ancre en bas a droite
+    el.style.left = el.style.top = el.style.right = el.style.bottom = '';
+    return;
+  }
+  setPos(el, clamp(pos.left, pos.top, el));
+}
+
+// ─── evitement du champ de saisie ───────────────────────────────────────
+
+// Quand on ecrit dans un champ que la carte recouvre, elle s'ecarte le temps
+// de la saisie : au-dessus du champ, sinon dans un coin libre. Deplacement
+// temporaire, jamais enregistre : elle revient a sa place quand le champ perd
+// le focus.
+const TEXT_TYPES = ['', 'text', 'search', 'email', 'url', 'tel', 'password', 'number'];
+
+function isTextField(t) {
+  if (!t || t.nodeType !== 1) return false;
+  if (t.isContentEditable || t.tagName === 'TEXTAREA') return true;
+  return t.tagName === 'INPUT' && TEXT_TYPES.includes((t.getAttribute('type') || '').toLowerCase());
+}
+
+function overlaps(a, b) {
+  return a.left < b.right + MARGIN && a.right > b.left - MARGIN
+    && a.top < b.bottom + MARGIN && a.bottom > b.top - MARGIN;
+}
+
+function dodge(el) {
+  if (!dodgeField || dragging) return;
+  const f = dodgeField.getBoundingClientRect();
+  const c = el.getBoundingClientRect();
+  if (!overlaps(c, f)) return;
+
+  const w = el.offsetWidth, h = el.offsetHeight;   // insensibles a l'animation d'entree
+  const spots = [
+    { left: c.left, top: f.top - h - MARGIN },                // au-dessus du champ
+    { left: MARGIN, top: window.innerHeight - h - MARGIN },   // bas gauche
+    { left: MARGIN, top: MARGIN },                            // haut gauche
+    { left: window.innerWidth - w - MARGIN, top: MARGIN },    // haut droite
+  ];
+  for (const s of spots) {
+    const p = clamp(s.left, s.top, el);
+    if (!overlaps({ left: p.left, top: p.top, right: p.left + w, bottom: p.top + h }, f)) {
+      setPos(el, p);
+      dodged = true;
+      return;
+    }
+  }
+}
+
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (!isTextField(t) || (bannerEl && bannerEl.contains(t))) return;
+  dodgeField = t;
+  if (bannerEl) dodge(bannerEl);
+}, true);
+
+document.addEventListener('focusout', e => {
+  if (e.target !== dodgeField) return;
+  dodgeField = null;
+  if (bannerEl && dodged) applyPos(bannerEl);
+}, true);
 
 function enableDrag(el, handle) {
   let dx = 0, dy = 0, id = null;
@@ -115,6 +179,8 @@ function enableDrag(el, handle) {
 
     const r = el.getBoundingClientRect();
     pos = { left: r.left, top: r.top };
+    dodged = false;
+    dodgeField = null;                      // place choisie a la main : on ne la conteste pas
     savePos();
   };
   handle.addEventListener('pointerup', end);
@@ -166,13 +232,16 @@ function createBanner(state) {
 
   const card = el('div', 'airlock-banner');
   card.id = 'airlock-banner';
+  // langue et sens d'ecriture sur la carte seulement, jamais sur la page hote
+  card.lang = airlockLang;
+  card.dir = airlockIsRtl() ? 'rtl' : 'ltr';
   card.setAttribute('role', 'complementary');
   card.setAttribute('aria-label', airlockT('cardAria'));
 
   // entete
   const head = el('div', 'airlock-head');
   head.innerHTML = GRIP;
-  head.appendChild(el('p', 'airlock-label', airlockT(hasFocus ? 'currentFocus' : 'cardNoFocus')));
+  head.appendChild(el('p', 'airlock-label', hasFocus ? airlockT('currentFocus') : airlockT('cardNoFocus')));
 
   const close = el('button', 'airlock-close', '×');
   close.type = 'button';
@@ -235,6 +304,7 @@ function createBanner(state) {
   card.addEventListener('pointerleave', () => { hovered = false; });
 
   applyPos(card);
+  dodge(card);
   enableDrag(card, head);
   bannerEl = card;
 
@@ -297,10 +367,12 @@ function showShortcutWarning(bound) {
 
   const box = el('div', 'airlock-warning');
   box.id = 'airlock-shortcut-warning';
+  box.lang = airlockLang;
+  box.dir = airlockIsRtl() ? 'rtl' : 'ltr';
   box.setAttribute('role', 'alert');
 
   const head = el('div', 'airlock-warning-head');
-  head.appendChild(el('p', 'airlock-warning-title', airlockT(bound ? 'warnRebound' : 'warnUnbound')));
+  head.appendChild(el('p', 'airlock-warning-title', bound ? airlockT('warnRebound') : airlockT('warnUnbound')));
   const close = el('button', 'airlock-warning-close', '×');
   close.type = 'button';
   close.setAttribute('aria-label', airlockT('close'));
@@ -309,7 +381,9 @@ function showShortcutWarning(bound) {
   box.appendChild(head);
 
   box.appendChild(el('p', 'airlock-warning-text',
-    airlockT(bound ? 'warnReboundText' : 'warnUnboundText', { suggested: SUGGESTED, bound })));
+    bound
+      ? airlockT('warnReboundText', { suggested: SUGGESTED, bound })
+      : airlockT('warnUnboundText', { suggested: SUGGESTED })));
   box.appendChild(el('p', 'airlock-warning-ok', airlockT('warnOk')));
 
   const open = el('button', 'airlock-warning-btn', airlockT('warnBtn'));
@@ -340,7 +414,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== 'local') return;
   if (changes[UI_KEY] && changes[UI_KEY].newValue) {
     pos = changes[UI_KEY].newValue;
-    if (bannerEl) applyPos(bannerEl);
+    if (bannerEl) { applyPos(bannerEl); dodge(bannerEl); }
   }
   if (changes[AIRLOCK_CARD_CLOSED_KEY]) {
     closed = changes[AIRLOCK_CARD_CLOSED_KEY].newValue || null;
@@ -366,7 +440,7 @@ setInterval(() => {
 }, 1000);
 
 // la fenetre retrecit : la carte doit rester visible
-window.addEventListener('resize', () => { if (bannerEl) applyPos(bannerEl); });
+window.addEventListener('resize', () => { if (bannerEl) { applyPos(bannerEl); dodge(bannerEl); } });
 
 // premier rendu une fois la langue connue (evite une carte refaite aussitot),
 // puis a chaque changement de langue : airlockLang fait partie de lastSig

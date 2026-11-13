@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock: Yakala ve Önceliklendir"
+  },
+  "description": {
+    "message": "Dürtü ile eylem arasında bir hava kilidi. Fikre dalmak yerine onu yakala. Genel kısayol Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "Yakalama hava kilidini aç"
+  }
+}

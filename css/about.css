@@ -1,0 +1,13 @@
+/* Airlock - credits page. Layout and cards come from css/options.css. */
+
+.vision p { color: var(--text-2); font-size: 13.5px; line-height: 1.65; }
+.vision p + p { margin-top: 10px; }
+
+.links { list-style: none; display: grid; gap: 8px; margin-top: 6px; }
+.links a {
+  color: var(--text-2); font-size: 13px;
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--brand-line);
+}
+.links a:hover { color: var(--brand); }
+
+a.btn { text-decoration: none; display: inline-flex; align-items: center; }

@@ -1,14 +1,14 @@
 /* Airlock - shared design system for the extension pages (popup, options, steps).
  *
  * Look: the wqqz.dev Astro theme (MIT, github.com/imwqqz/wqqz.dev): zinc greys,
- * JetBrains Mono for all text, one violet accent, 0.625rem corners, flat
+ * JetBrains Mono for all text, one blue accent, 0.625rem corners, flat
  * surfaces with hairline borders. Its oklch tokens are converted to hex here
  * so older Chrome versions render them too.
  *
  * One colour, one meaning, on every surface:
- *   brand (the theme's violet accent) = switch / the one thing to do now
- *   queue (teal)                      = waiting its turn
- *   neutral (grey)                    = drop: a legitimate answer, never red
+ *   brand (blue, from the extension icon) = switch / the one thing to do now
+ *   queue (teal)                           = waiting its turn
+ *   neutral (grey)                         = drop: a legitimate answer, never red
  *
  * The font is bundled in fonts/ (SIL OFL): no network call, the "100% local"
  * promise holds. The content script card cannot use it without exposing
@@ -26,7 +26,10 @@
 }
 
 :root {
-  --ff-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* JetBrains Mono only covers Latin: other scripts fall back, glyph by glyph,
+     to the system fonts of --ff-script (set per language below). */
+  --ff-script: system-ui;
+  --ff-mono: "JetBrains Mono", var(--ff-script), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --ff-body: var(--ff-mono);
   --ff-disp: var(--ff-mono);
 
@@ -46,11 +49,11 @@
   --text: #18181b;
   --text-2: #3f3f46;
   --text-3: #606067;
-  --brand: #7945df;
-  --brand-grad: linear-gradient(#7945df, #7945df);
+  --brand: #1d6cb3;
+  --brand-grad: linear-gradient(#1d6cb3, #1d6cb3);
   --brand-ink: #fafafa;
-  --brand-soft: rgba(121, 69, 223, .08);
-  --brand-line: rgba(121, 69, 223, .40);
+  --brand-soft: rgba(29, 108, 179, .08);
+  --brand-line: rgba(29, 108, 179, .40);
   --queue: #00786f;
   --queue-soft: rgba(0, 150, 137, .08);
   --queue-line: rgba(0, 150, 137, .40);
@@ -69,6 +72,21 @@
   color-scheme: light;
 }
 
+/* System fonts per script, no web font: the bundle stays Latin-only. Set on
+   the root itself so --ff-mono above picks them up. */
+:root:lang(ja) { --ff-script: "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", system-ui; }
+:root:lang(zh-CN) { --ff-script: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", system-ui; }
+:root:lang(ko) { --ff-script: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans CJK KR", "Noto Sans KR", system-ui; }
+:root:lang(hi), :root:lang(mr) { --ff-script: "Nirmala UI", "Kohinoor Devanagari", "Noto Sans Devanagari", system-ui; }
+:root:lang(bn) { --ff-script: "Nirmala UI", "Kohinoor Bangla", "Noto Sans Bengali", system-ui; }
+:root:lang(ta) { --ff-script: "Nirmala UI", "Tamil Sangam MN", "Noto Sans Tamil", system-ui; }
+:root:lang(te) { --ff-script: "Nirmala UI", "Kohinoor Telugu", "Noto Sans Telugu", system-ui; }
+:root:lang(ar) { --ff-script: "Segoe UI", "Geeza Pro", "Noto Naskh Arabic", "Noto Sans Arabic", system-ui; }
+:root:lang(ur) { --ff-script: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Segoe UI", "Noto Naskh Arabic", system-ui; }
+
+/* hidden until the strings of the cached language are loaded (js/i18n.js) */
+html.airlock-i18n-pending body { visibility: hidden; }
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0a0a0c;
@@ -81,11 +99,11 @@
     --text: #e4e4e7;
     --text-2: #b4b4bb;
     --text-3: #8e8e96;
-    --brand: #a889ff;
-    --brand-grad: linear-gradient(#a889ff, #a889ff);
+    --brand: #4497da;
+    --brand-grad: linear-gradient(#4497da, #4497da);
     --brand-ink: #18181b;
-    --brand-soft: rgba(168, 137, 255, .10);
-    --brand-line: rgba(168, 137, 255, .40);
+    --brand-soft: rgba(68, 151, 218, .10);
+    --brand-line: rgba(68, 151, 218, .40);
     --queue: #00bc7d;
     --queue-soft: rgba(0, 188, 125, .09);
     --queue-line: rgba(0, 188, 125, .38);
@@ -111,11 +129,11 @@
   --text: #e4e4e7;
   --text-2: #b4b4bb;
   --text-3: #8e8e96;
-  --brand: #a889ff;
-  --brand-grad: linear-gradient(#a889ff, #a889ff);
+  --brand: #4497da;
+  --brand-grad: linear-gradient(#4497da, #4497da);
   --brand-ink: #18181b;
-  --brand-soft: rgba(168, 137, 255, .10);
-  --brand-line: rgba(168, 137, 255, .40);
+  --brand-soft: rgba(68, 151, 218, .10);
+  --brand-line: rgba(68, 151, 218, .40);
   --queue: #00bc7d;
   --queue-soft: rgba(0, 188, 125, .09);
   --queue-line: rgba(0, 188, 125, .38);
@@ -197,7 +215,7 @@ kbd {
 
 .callout {
   border: 1px solid var(--warn-line);
-  border-left-width: 3px;
+  border-inline-start-width: 3px;
   background: var(--warn-soft);
   border-radius: var(--r-sm);
   padding: 12px 14px;

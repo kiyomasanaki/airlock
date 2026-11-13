@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - Tangkap dan prioritaskan"
+  },
+  "description": {
+    "message": "Sebuah airlock antara impuls dan tindakan. Catat idenya daripada langsung terjun ke dalamnya. Pintasan global Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "Buka airlock pencatatan"
+  }
+}

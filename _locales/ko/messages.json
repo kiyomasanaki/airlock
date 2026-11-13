@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - 포착 및 우선순위 지정"
+  },
+  "description": {
+    "message": "충동과 행동 사이에 두는 에어락. 바로 뛰어들지 말고 아이디어를 먼저 기록하세요. 전역 단축키 Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "포착 에어락 열기"
+  }
+}

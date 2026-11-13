@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title data-i18n="optTitle">Airlock · Options</title>
 <script src="../js/theme.js"></script>
+<script src="../js/state.js"></script>
+<script src="../js/i18n.js"></script>
 <link rel="stylesheet" href="../css/tokens.css">
 <link rel="stylesheet" href="../css/options.css">
 </head>
@@ -20,8 +22,6 @@
     <div class="row">
       <select id="selLang" aria-labelledby="langTitle">
         <option value="auto" data-i18n="optLangAuto">Automatique (langue du navigateur)</option>
-        <option value="fr" lang="fr">Français</option>
-        <option value="en" lang="en">English</option>
       </select>
     </div>
   </section>
@@ -48,6 +48,38 @@
   </section>
 
   <section class="card">
+    <div class="card-title"><span data-i18n="optGuardTitle">Focus guard</span> <span class="pill off" id="guardState">…</span></div>
+    <div class="card-desc" data-i18n="optGuardDesc"></div>
+    <div class="row">
+      <button id="btnGuard" class="btn btn-primary"></button>
+      <label class="field"><span data-i18n="optGuardSensitivity">Sensitivity</span>
+        <select id="selGuardSens">
+          <option value="high" data-i18n="optGuardHigh"></option>
+          <option value="medium" data-i18n="optGuardMedium"></option>
+          <option value="low" data-i18n="optGuardLow"></option>
+        </select>
+      </label>
+    </div>
+    <div class="card-desc guard-model" id="guardModel"></div>
+    <div class="row" id="guardDlRow" hidden>
+      <button class="btn" id="btnGuardDl" data-i18n="optGuardDl">Download the local models</button>
+    </div>
+    <!-- nothing downloads before this second, explicit click -->
+    <div class="callout" id="guardDlInfo" hidden>
+      <span data-i18n="optGuardDlInfo"></span>
+      <div class="row">
+        <button class="btn btn-primary" id="btnGuardDlGo" data-i18n="optGuardDlConfirm">Download</button>
+        <button class="btn" id="btnGuardDlCancel" data-i18n="optGuardDlCancel">Cancel</button>
+      </div>
+    </div>
+    <div class="status" id="guardStatus"></div>
+    <div class="row guard-bypass">
+      <span id="guardBypass"></span>
+      <button class="btn" id="btnGuardBypassReset" data-i18n="optGuardBypassReset" hidden>Reset</button>
+    </div>
+  </section>
+
+  <section class="card">
     <div class="card-title" data-i18n="optDataTitle">Export / Import</div>
     <div class="card-desc" data-i18n="optDataDesc">Tes données restent 100% locales. L'export (focus, file, historique daté, étapes) sert de sauvegarde ou de transfert manuel vers une autre machine.</div>
     <div class="row">
@@ -63,11 +95,18 @@
     <div id="doneList"><div class="empty" data-i18n="loading">chargement…</div></div>
   </section>
 
+  <section class="card">
+    <div class="card-title" data-i18n="optAboutTitle">About</div>
+    <div class="card-desc" data-i18n="optAboutDesc"></div>
+    <div class="row">
+      <button class="btn" id="btnAbout" data-i18n="optAboutBtn">Open the credits</button>
+    </div>
+  </section>
+
   <footer data-i18n="optFooter">Airlock : stockage 100% local, aucun serveur, aucune télémétrie.</footer>
 </div>
 
-<script src="../js/state.js"></script>
-<script src="../js/i18n.js"></script>
+<script src="../js/guard.js"></script>
 <script src="../js/options.js"></script>
 </body>
 </html>

@@ -1,0 +1,11 @@
+{
+  "name": {
+    "message": "Airlock - Capturar y priorizar"
+  },
+  "description": {
+    "message": "Un airlock entre el impulso y la acción. Captura la idea en vez de lanzarte a ella. Atajo global Ctrl+Shift+E."
+  },
+  "commandDescription": {
+    "message": "Abrir el airlock de captura"
+  }
+}

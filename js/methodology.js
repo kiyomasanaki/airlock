@@ -219,7 +219,7 @@ function renderDetail() {
   const fill = el('i');
   fill.style.width = total ? `${Math.round((done / total) * 100)}%` : '0';
   bar2.appendChild(fill);
-  pw.append(bar2, el('div', 'progress-label', airlockT('mProgress', done, total)));
+  pw.append(bar2, el('div', 'progress-label', airlockT('mProgress', { done, n: total })));
   host.appendChild(pw);
 
   // etapes
@@ -272,7 +272,7 @@ function render() {
 
 // in the interface language, so the steps come back in it too
 function buildPrompt(impulse) {
-  return airlockT('mPrompt', impulse);
+  return airlockT('mPrompt', { impulse });
 }
 
 function parseSteps(raw) {
