@@ -3,6 +3,7 @@
 // Every mutation is saved immediately, including a capture still waiting for its
 // switch/queue/drop answer (`pending`): the popup closes as soon as it loses
 // focus, and an impulse typed then lost is exactly what Airlock exists to prevent.
+// Left unanswered (10 s of silence, or the popup closed), it goes to the queue.
 const THEME_KEY = 'airlock_theme';
 // The same script drives the popup and the wide view (pages/wide.html): every
 // popup-only behaviour checks this flag.
@@ -15,6 +16,9 @@ function airlockClosePopup() {
   if (!WIDE) window.close();
 }
 const UNDO_MS = 8000;
+// An unanswered capture goes to the queue after this long without any sign
+// from the user: parking it is the answer that loses nothing and changes nothing.
+const AUTO_QUEUE_MS = 10000;
 
 let state = airlockBlank();
 let loaded = false;          // a capture typed before the first read is replayed after it
@@ -24,6 +28,8 @@ let lastSaved = null;         // serialized state as last read or written
 let undoSnapshot = null;
 let undoTimer = null;
 let shortcut = '';            // the one Chrome really bound, read at startup
+let autoQueueTimer = null;
+let autoQueueFor = null;      // the pending capture the timer runs for
 
 const $ = id => document.getElementById(id);
 
@@ -181,7 +187,7 @@ function render() {
     ns.hidden = true;
   }
 
-  // Decision (restored if the popup was closed before answering)
+  // Decision (restored while another popup or wide view still holds it)
   if (state.pending) {
     // the focus can be gone meanwhile (marked done, changed from another page)
     $('decisionQ').innerHTML = '<b></b><br><span class="sub"></span>';
@@ -379,6 +385,7 @@ function renderGuard() {
   // the capture it was asked for is gone (answered from another surface)
   if (guard && guard.kind === 'switch' && !state.pending) guard = null;
   if (guard && guard.kind === 'promote' && !state.queue.includes(guard.idea)) guard = null;
+  syncAutoQueue();
   $('guard').hidden = !guard;
   $('decision').classList.toggle('guarded', !!guard && guard.kind === 'switch');
   if (!guard) return;
@@ -464,6 +471,59 @@ chrome.storage.onChanged.addListener((changes, area) => {
   guardSettings = airlockGuardSettings(changes[AIRLOCK_GUARD_KEY].newValue);
   prepareGuard();
 });
+
+// ─── auto-queue ─────────────────────────────────────────────────────────
+
+// Only with a focus running: without one, the capture is the first idea and
+// becomes the focus. The guard's question does not stop it: silence is still
+// no answer, and the idea is parked.
+function autoQueueWanted() {
+  return !!state.pending && !!state.focus;
+}
+
+function stopAutoQueue() {
+  clearTimeout(autoQueueTimer);
+  autoQueueTimer = null;
+  autoQueueFor = null;
+  $('btnQueue').classList.remove('auto');
+}
+
+// Restarts the countdown and the fill on the queue button from zero.
+function startAutoQueue() {
+  stopAutoQueue();
+  autoQueueFor = state.pending;
+  const btn = $('btnQueue');
+  void btn.offsetWidth;                        // restart the one-shot animation
+  btn.style.setProperty('--auto-queue-ms', AUTO_QUEUE_MS + 'ms');
+  btn.classList.add('auto');
+  autoQueueTimer = setTimeout(() => {
+    autoQueueTimer = null;
+    if (autoQueueWanted() && state.pending === autoQueueFor) {
+      if (guard && guard.kind === 'switch') guard = null;
+      decide('queue');
+    } else {
+      stopAutoQueue();
+    }
+  }, AUTO_QUEUE_MS);
+}
+
+function syncAutoQueue() {
+  if (!autoQueueWanted()) stopAutoQueue();
+  else if (state.pending !== autoQueueFor) startAutoQueue();
+}
+
+// Closing the popup without answering parks the capture too, but a closed page
+// runs no timer: the service worker does it when the last port goes. It drops
+// the ports when it restarts, hence the reconnect.
+function connectDecider() {
+  chrome.runtime.connect({ name: 'airlock_decider' }).onDisconnect.addListener(connectDecider);
+}
+connectDecider();
+
+// Any sign of the user (key, pointer, scroll) gives them ten more seconds.
+['keydown', 'pointerdown', 'pointermove', 'wheel'].forEach(type =>
+  document.addEventListener(type, () => { if (autoQueueFor !== null) startAutoQueue(); },
+    { capture: true, passive: true }));
 
 // ─── event handlers ─────────────────────────────────────────────────────
 

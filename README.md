@@ -33,6 +33,8 @@ You're working. An idea pops up and it feels **urgent**.
 | <kbd>2</kbd> | **queue** | The idea waits its turn, you keep going |
 | <kbd>3</kbd> | **drop** | Gone. And that's perfectly fine |
 
+No answer after 10 seconds, or the popup closed? The idea goes to the queue.
+
 That's it. The idea is safe, and you didn't dive in. 🎯
 
 ---
@@ -184,7 +186,7 @@ Each rule is a constraint, not a preference: it's what keeps the tool usable on 
 | Next item auto-promoted on ✓ | Finishing shouldn't require deciding what's next |
 | Keys 1, 2, 3 | The whole loop works without the mouse |
 | Undo instead of confirmation dialogs | A misclick never costs an idea |
-| Nothing captured is ever lost | An unanswered capture is saved and flagged with `?` |
+| Nothing captured is ever lost | An unanswered capture goes to the queue after 10 s of silence or when the popup closes |
 
 </details>
 
