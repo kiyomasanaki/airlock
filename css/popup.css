@@ -227,6 +227,20 @@ body {
 .btn-d.switch:hover { filter: brightness(1.05); }
 .btn-d.queue { background: var(--queue-soft); border-color: var(--queue-line); color: var(--queue); }
 .btn-d.drop { background: transparent; border-color: var(--line-strong); color: var(--neutral); }
+/* auto-queue countdown: a fill that grows once under the default answer;
+   with reduced motion it stays full, marking the default without moving */
+.btn-d.queue { position: relative; overflow: hidden; }
+.btn-d.queue.auto::after {
+  content: '';
+  position: absolute; inset-inline: 0; bottom: 0;
+  height: 3px;
+  background: var(--queue);
+  opacity: .55;
+  transform-origin: left;
+  animation: airlock-auto-queue var(--auto-queue-ms, 10s) linear both;   /* set from AUTO_QUEUE_MS */
+}
+[dir="rtl"] .btn-d.queue.auto::after { transform-origin: right; }
+@keyframes airlock-auto-queue { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .btn-d.yes { background: color-mix(in srgb, var(--ok) 12%, transparent); border-color: color-mix(in srgb, var(--ok) 45%, transparent); color: var(--ok); }
 
 /* ─── focus guard ────────────────────────────────────────────────────── */

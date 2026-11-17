@@ -239,6 +239,10 @@ problem actually experienced during Phase 1.
   parking the new idea, with a quieter "switch anyway". The question is skipped only
   when the new idea is clearly the same subject, judged on the machine (Chrome's
   local model when available, else word overlap). Never on capture. Can be turned off
+- **Unanswered capture parked** *(done in 2.1.0)*: with a focus running, a capture
+  left 10 seconds without any sign from the user (key, pointer, scroll; a thin bar
+  fills under "queue") goes to the queue, and so does one left behind when the popup
+  closes (the service worker sees the last popup or wide view go)
 
 **Exit condition:** one or two features added, validated by usage, without inflating
 the UI to the point of losing the simplicity of the airlock.

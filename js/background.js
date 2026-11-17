@@ -1,11 +1,13 @@
 // Airlock - service worker.
 //
-// Two small jobs, no state of its own:
+// Three small jobs, no state of its own:
 //  1. Keep the toolbar icon informative: its tooltip shows the current focus and
 //     next step from any tab, and a "?" badge flags a capture still waiting for a
-//     switch/queue/drop answer (the popup was closed before deciding).
+//     switch/queue/drop answer.
 //  2. Keep the optional "reminder on every site" content script registered
 //     exactly when the user has granted the matching host permission.
+//  3. Park an unanswered capture in the queue once no popup or wide view is
+//     left open to answer it.
 
 // The worker can only import scripts when it starts, so it cannot load a
 // language file later: worker-strings.js carries its few strings in every
@@ -127,15 +129,51 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   if (msg && msg.type === 'airlock_check_shortcut') refreshFromStorage();
 });
 
+// ─── unanswered capture ─────────────────────────────────────────────────
+
+// The popup counts down 10 s itself (js/popup.js), but it dies the moment it
+// loses focus: whatever happens, a capture left without an answer ends up in
+// the queue. Each popup and wide view holds a port open; when the last one goes,
+// the worker moves `pending` to the queue. A worker restart drops the ports and
+// the pages reconnect at once, so an empty set here is short-lived.
+const AIRLOCK_PORT = 'airlock_decider';
+const deciders = new Set();
+let flushTimer = null;
+
+function flushPending() {
+  clearTimeout(flushTimer);
+  // the page's last write can still be on its way when its port closes
+  flushTimer = setTimeout(() => {
+    if (deciders.size) return;
+    chrome.storage.local.get([AIRLOCK_KEY], r => {
+      if (!airlockNormalize(r[AIRLOCK_KEY]).pending) return;
+      airlockMutate(st => {
+        if (st.pending) { st.queue.push(st.pending); st.pending = null; }
+      });
+    });
+  }, 500);
+}
+
+chrome.runtime.onConnect.addListener(port => {
+  if (port.name !== AIRLOCK_PORT) return;
+  deciders.add(port);
+  clearTimeout(flushTimer);
+  port.onDisconnect.addListener(() => {
+    deciders.delete(port);
+    if (!deciders.size) flushPending();
+  });
+});
+
 // ─── startup ────────────────────────────────────────────────────────────
 
 chrome.runtime.onInstalled.addListener(details => {
   refreshFromStorage();
   syncEverywhere();
+  flushPending();        // a capture left pending by an older version or a crash
   // Chrome only binds the suggested key at install, and skips it on conflict.
   // Say so once, right away; later, only the badge remains.
   if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
     airlockShortcut(shortcut => { if (!shortcut) chrome.runtime.openOptionsPage(); });
   }
 });
-chrome.runtime.onStartup.addListener(() => { refreshFromStorage(); syncEverywhere(); });
+chrome.runtime.onStartup.addListener(() => { refreshFromStorage(); syncEverywhere(); flushPending(); });
